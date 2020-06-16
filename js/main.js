@@ -9,8 +9,10 @@ var TIMES = ['12:00', '13:00', '14:00'];
 var PIN_HALF_WIDTH = 25;
 var PIN_HEIGHT = 70;
 var NUMBER_OF_ADS = 8;
-var PIN_MAIN_RADIUS = 33;
-var PIN_MAIN_HEIGHT = 65 + 22;
+var PIN_MAIN_HALF = 31;
+var PIN_MAIN_HEIGHT = 62 + 22;
+var ENTER = 13;
+var mainButton = 0;
 
 var getRandom = function (lower, upper) {
   var min = Math.ceil(lower);
@@ -97,18 +99,27 @@ map.appendChild(fragmentPins);
 
 // ------------------------ module4-task2 -----------------------------------------------------------------------
 // Все <input> и <select> формы .ad-form заблокированы с помощью атрибута disabled (тз 1.1.)
+
 var form = document.querySelector('.ad-form');
-var inputs = Array.from(form.getElementsByTagName('input'));
-var selects = Array.from(form.getElementsByTagName('select'));
-var elements = inputs.concat(selects);
-for (var i = 0; i < elements.length; i++) {
-  elements[i].setAttribute('disabled', true);
-}
+
+var inputsForm = Array.from(document.querySelector('.ad-form').getElementsByTagName('input'));
+var selectsForm = Array.from(document.querySelector('.ad-form').getElementsByTagName('select'));
+var inputsMap = Array.from(document.querySelector('.map__features').getElementsByTagName('input'));
+var selectsMap = Array.from(document.querySelector('.map__filters').getElementsByTagName('select'));
+var elements = inputsForm.concat(selectsForm, inputsMap, selectsMap);
+
+var setDisabled = function (elem) {
+  for (var i = 0; i < elem.length; i++) {
+    elem[i].setAttribute('disabled', '');
+  }
+};
+
+setDisabled(elements);
 
 // Заполнение поля адреса
 var address = document.querySelector('#address');
-var pinX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_RADIUS;
-var pinY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_RADIUS;
+var pinX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
+var pinY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_HALF;
 
 address.value = pinX + ', ' + pinY;
 
@@ -128,54 +139,55 @@ var activationPage = function () {
     mapFiltersElements[i].removeAttribute('disabled', true);
   }
 
-  pinX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_RADIUS;
+  pinX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
   pinY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_HEIGHT;
 
   address.value = pinX + ', ' + pinY;
 };
 
 pin.addEventListener('mousedown', function (evt) {
-  if (evt.button === 0) {
+  if (evt.button === mainButton) {
     activationPage();
   }
 });
 
 pin.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === 13) {
+  if (evt.keyCode === ENTER) {
     activationPage();
   }
 });
 
 // Непростая валидация: зависимость кол-ва гостей от кол-ва комнат
-var rooms = document.querySelector('#room_number').getElementsByTagName('option');
-var guests = document.querySelector('#capacity').getElementsByTagName('option');
 
-document.querySelector('#room_number').addEventListener('click', function () {
-  if (rooms[0].selected) {
-    guests[0].setAttribute('disabled', true);
-    guests[1].setAttribute('disabled', true);
-    guests[2].removeAttribute('disabled', true);
-    guests[3].setAttribute('disabled', true);
+var DISABLED_ROOMS = {
+  '1': ['1'],
+  '2': ['1', '2'],
+  '3': ['1', '2', '3'],
+  '100': ['0']
+};
+var rooms = form.querySelector('#room_number');
+var capacity = form.querySelector('#capacity');
+
+var checkCapacity = function (item) {
+  if (item.selected) {
+    if (item.disabled) {
+      capacity.setCustomValidity('Количество гостей не соответствует количеству комнат');
+    } else {
+      capacity.setCustomValidity('');
+    }
+  }
+}
+
+rooms.addEventListener('change', function () {
+  for (var j = 0; j < capacity.options.length; j++) {
+    capacity[j].disabled = !DISABLED_ROOMS[rooms.value].includes(capacity.options[j].value);
+    checkCapacity(capacity[j]);
   }
 
-  if (rooms[1].selected) {
-    guests[0].setAttribute('disabled', true);
-    guests[1].removeAttribute('disabled', true);
-    guests[2].removeAttribute('disabled', true);
-    guests[3].setAttribute('disabled', true);
-  }
+});
 
-  if (rooms[2].selected) {
-    guests[0].removeAttribute('disabled', true);
-    guests[1].removeAttribute('disabled', true);
-    guests[2].removeAttribute('disabled', true);
-    guests[3].setAttribute('disabled', true);
-  }
-
-  if (rooms[3].selected) {
-    guests[0].setAttribute('disabled', true);
-    guests[1].setAttribute('disabled', true);
-    guests[2].setAttribute('disabled', true);
-    guests[3].removeAttribute('disabled', true);
+capacity.addEventListener('change', function() {
+  for (var j = 0; j < capacity.options.length; j++) {
+    checkCapacity(capacity[j]);
   }
 });
