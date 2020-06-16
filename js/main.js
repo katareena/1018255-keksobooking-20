@@ -109,8 +109,8 @@ var selectsMap = Array.from(document.querySelector('.map__filters').getElementsB
 var elements = inputsForm.concat(selectsForm, inputsMap, selectsMap);
 
 var setDisabled = function (elem) {
-  for (var i = 0; i < elem.length; i++) {
-    elem[i].setAttribute('disabled', '');
+  for (var a = 0; a < elem.length; a++) {
+    elem[a].setAttribute('disabled', '');
   }
 };
 
@@ -129,14 +129,14 @@ var pin = document.querySelector('.map__pin--main');
 var activationPage = function () {
   document.querySelector('.map').classList.remove('map--faded');
   document.querySelector('.ad-form').classList.remove('ad-form--disabled');
-  for (var i = 0; i < elements.length; i++) {
-    elements[i].removeAttribute('disabled', true);
+  for (var x = 0; x < elements.length; x++) {
+    elements[x].removeAttribute('disabled', true);
   }
 
   var mapFilters = document.querySelector('.map__filters');
   var mapFiltersElements = Array.from(mapFilters.getElementsByTagName('*'));
-  for (var i = 0; i < mapFiltersElements.length; i++) {
-    mapFiltersElements[i].removeAttribute('disabled', true);
+  for (var g = 0; g < mapFiltersElements.length; g++) {
+    mapFiltersElements[g].removeAttribute('disabled', true);
   }
 
   pinX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
@@ -176,7 +176,7 @@ var checkCapacity = function (item) {
       capacity.setCustomValidity('');
     }
   }
-}
+};
 
 rooms.addEventListener('change', function () {
   for (var j = 0; j < capacity.options.length; j++) {
@@ -186,7 +186,7 @@ rooms.addEventListener('change', function () {
 
 });
 
-capacity.addEventListener('change', function() {
+capacity.addEventListener('change', function () {
   for (var j = 0; j < capacity.options.length; j++) {
     checkCapacity(capacity[j]);
   }
