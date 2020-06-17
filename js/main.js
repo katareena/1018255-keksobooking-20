@@ -1,5 +1,5 @@
 'use strict';
-
+// ------------------------ 3-1 ---------------------------------------------------------------------------------
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var PHOTOS_OBJECTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var TYPES_OBJECT = ['palace', 'flat', 'house', 'bungalo'];
@@ -42,7 +42,7 @@ var createOneAd = function (i) {
     offer: {
       title: TITLES[Math.floor(Math.random() * TITLES.length)],
       address: X + ', ' + Y,
-      price: getRandom(200, 1500),
+      price: getRandom(1500, 5000),
       type: TYPES_OBJECT[Math.floor(Math.random() * TYPES_OBJECT.length)],
       rooms: getRandom(1, 4),
       guests: getRandom(1, 6),
@@ -66,17 +66,16 @@ var createAds = function () {
   for (var i = 0; i < NUMBER_OF_ADS; i++) {
     cards.push(createOneAd(i));
   }
-
   return cards;
 };
 
 var ads = createAds();
 
-// ------------------------ 2 -----------------------
+// -----------------------------------------------
 
 // document.querySelector('.map').classList.remove('map--faded');
 
-// ------------------------ 3 -----------------------
+// -----------------------------------------------
 var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
 var renderPin = function (parametrs) {
@@ -88,16 +87,59 @@ var renderPin = function (parametrs) {
   return pinElement;
 };
 
-var fragmentPins = document.createDocumentFragment();
-for (var i = 0; i < ads.length; i++) {
-  fragmentPins.appendChild(renderPin(ads[i]));
-}
 
-var map = document.querySelector('.map');
+var renderPins = function () {
+  var fragmentPins = document.createDocumentFragment();
+  for (var i = 0; i < ads.length; i++) {
+    fragmentPins.appendChild(renderPin(ads[i]));
+  }
+  var map = document.querySelector('.map');
+  map.appendChild(fragmentPins);
+};
 
-map.appendChild(fragmentPins);
+renderPins();
 
-// ------------------------ module4-task2 -----------------------------------------------------------------------
+// ------------------------ 3-2 ---------------------------------------------------------------------------------
+var similarCardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+
+var TYPS = {
+  'flat': 'Квартира',
+  'bungalo': 'Бунгало',
+  'house': 'Дом',
+  'palace': 'Дворец'
+};
+
+var createCard = function (parametrs) {
+  var cardElement = similarCardTemplate.cloneNode(true);
+  cardElement.querySelector('.popup__avatar').src = parametrs.author.avatar;
+  cardElement.querySelector('.popup__title').textContent = parametrs.offer.title;
+  cardElement.querySelector('.popup__text--address').textContent = parametrs.offer.address;
+  cardElement.querySelector('.popup__text--price').textContent = parametrs.offer.price + '₽/ночь';
+  cardElement.querySelector('.popup__type').textContent = TYPS[parametrs.offer.type];
+  cardElement.querySelector('.popup__text--capacity').textContent = parametrs.offer.rooms + ' комнаты для ' + parametrs.offer.guests + ' гостей.';
+  cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + parametrs.offer.checkin + ', выезд до ' + parametrs.offer.checkout;
+  cardElement.querySelector('.popup__features').textContent = parametrs.offer.features;
+  cardElement.querySelector('.popup__description').textContent = parametrs.offer.description;
+  if (parametrs.offer.photos.length > 0) {
+    cardElement.querySelector('.popup__photo').src = parametrs.offer.photos[0];
+  } else {
+    cardElement.querySelector('.popup__photos').setAttribute('style', 'display: none;');
+  }
+
+  return cardElement;
+};
+
+var renderCard = function () {
+  var fragmentCard = document.createDocumentFragment();
+  fragmentCard.appendChild(createCard(ads[0]));
+  var map = document.querySelector('.map');
+  var last = map.querySelector('.map__filters-container');
+  map.insertBefore(fragmentCard, last);
+};
+
+renderCard();
+
+// ------------------------ 4-1 ---------------------------------------------------------------------------------
 // Все <input> и <select> формы .ad-form заблокированы с помощью атрибута disabled (тз 1.1.)
 
 var form = document.querySelector('.ad-form');
@@ -130,13 +172,13 @@ var activationPage = function () {
   document.querySelector('.map').classList.remove('map--faded');
   document.querySelector('.ad-form').classList.remove('ad-form--disabled');
   for (var x = 0; x < elements.length; x++) {
-    elements[x].removeAttribute('disabled', true);
+    elements[x].removeAttribute('disabled', '');
   }
 
   var mapFilters = document.querySelector('.map__filters');
   var mapFiltersElements = Array.from(mapFilters.getElementsByTagName('*'));
   for (var g = 0; g < mapFiltersElements.length; g++) {
-    mapFiltersElements[g].removeAttribute('disabled', true);
+    mapFiltersElements[g].removeAttribute('disabled', '');
   }
 
   pinX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
@@ -191,3 +233,5 @@ capacity.addEventListener('change', function () {
     checkCapacity(capacity[j]);
   }
 });
+
+// ------------------------ 4-2 ---------------------------------------------------------------------------------
