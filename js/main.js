@@ -1,5 +1,5 @@
 'use strict';
-
+// ------------------------ 3-1 ---------------------------------------------------------------------------------
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var PHOTOS_OBJECTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var TYPES_OBJECT = ['palace', 'flat', 'house', 'bungalo'];
@@ -42,7 +42,7 @@ var createOneAd = function (i) {
     offer: {
       title: TITLES[Math.floor(Math.random() * TITLES.length)],
       address: X + ', ' + Y,
-      price: getRandom(200, 1500),
+      price: getRandom(1500, 5000),
       type: TYPES_OBJECT[Math.floor(Math.random() * TYPES_OBJECT.length)],
       rooms: getRandom(1, 4),
       guests: getRandom(1, 6),
@@ -50,7 +50,7 @@ var createOneAd = function (i) {
       checkout: TIMES[Math.floor(Math.random() * TIMES.length)],
       features: getRandomАrray(0, 5, FEATURES),
       description: DISCRIPTIONS[Math.floor(Math.random() * DISCRIPTIONS.length)],
-      photos: getRandomАrray(0, 2, PHOTOS_OBJECTS),
+      photos: getRandomАrray(0, 5, PHOTOS_OBJECTS),
     },
     location: {
       x: X,
@@ -66,17 +66,18 @@ var createAds = function () {
   for (var i = 0; i < NUMBER_OF_ADS; i++) {
     cards.push(createOneAd(i));
   }
-
   return cards;
 };
 
 var ads = createAds();
 
-// ------------------------ 2 -----------------------
+// console.log(ads);
+
+// -----------------------------------------------
 
 // document.querySelector('.map').classList.remove('map--faded');
 
-// ------------------------ 3 -----------------------
+// -----------------------------------------------
 var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
 var renderPin = function (parametrs) {
@@ -88,16 +89,112 @@ var renderPin = function (parametrs) {
   return pinElement;
 };
 
-var fragmentPins = document.createDocumentFragment();
-for (var i = 0; i < ads.length; i++) {
-  fragmentPins.appendChild(renderPin(ads[i]));
-}
 
-var map = document.querySelector('.map');
+var renderPins = function () {
+  var fragmentPins = document.createDocumentFragment();
+  for (var i = 0; i < ads.length; i++) {
+    fragmentPins.appendChild(renderPin(ads[i]));
+  }
+  var map = document.querySelector('.map');
+  map.appendChild(fragmentPins);
+};
 
-map.appendChild(fragmentPins);
+renderPins();
 
-// ------------------------ module4-task2 -----------------------------------------------------------------------
+// ------------------------ 3-2 ---------------------------------------------------------------------------------
+var similarCardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+
+var TYPES = {
+  'flat': 'Квартира',
+  'bungalo': 'Бунгало',
+  'house': 'Дом',
+  'palace': 'Дворец'
+};
+
+
+var addValue = function (elem, value) {
+  elem.textContent = value;
+};
+
+var createCard = function (parametrs) {
+  var cardElement = similarCardTemplate.cloneNode(true);
+  cardElement.querySelector('.popup__avatar').src = parametrs.author.avatar;
+
+  addValue(cardElement.querySelector('.popup__title'), parametrs.offer.title);
+  addValue(cardElement.querySelector('.popup__text--address'), parametrs.offer.address);
+  addValue(cardElement.querySelector('.popup__text--price'), parametrs.offer.price + '₽/ночь');
+  addValue(cardElement.querySelector('.popup__type'), TYPES[parametrs.offer.type]);
+
+  var addTextCapacity = function () {
+    if (parametrs.offer.rooms === 1) {
+      var textCapacityRooms = parametrs.offer.rooms + ' комната для ';
+    } else {
+      textCapacityRooms = parametrs.offer.rooms + ' комнаты для ';
+    }
+
+    if (parametrs.offer.guests === 1) {
+      var textCapacityGuests = parametrs.offer.guests + ' гостя.';
+    } else {
+      textCapacityGuests = parametrs.offer.guests + ' гостей.';
+    }
+
+    cardElement.querySelector('.popup__text--capacity').textContent = textCapacityRooms + textCapacityGuests;
+  };
+  addTextCapacity();
+
+  addValue(cardElement.querySelector('.popup__text--time'), 'Заезд после ' + parametrs.offer.checkin + ', выезд до ' + parametrs.offer.checkout);
+
+  var addFeatures = function () {
+    var parent = cardElement.querySelector('.popup__features');
+    while (parent.firstChild) {
+      parent.firstChild.remove();
+    }
+
+    for (var i = 0; i < parametrs.offer.features.length; i++) {
+      var li = document.createElement('li');
+      li.setAttribute('class', 'popup__feature popup__feature--' + parametrs.offer.features[i]);
+      cardElement.querySelector('.popup__features').appendChild(li);
+    }
+  };
+  addFeatures();
+
+  addValue(cardElement.querySelector('.popup__description'), parametrs.offer.description);
+
+  var addPhotos = function () {
+    var parent = cardElement.querySelector('.popup__photos');
+    while (parent.firstChild) {
+      parent.firstChild.remove();
+    }
+
+    for (var i = 0; i < parametrs.offer.photos.length; i++) {
+      var img = document.createElement('img');
+      img.setAttribute('class', 'popup__photo');
+      img.setAttribute('width', '45');
+      img.setAttribute('height', '40');
+      img.setAttribute('src', parametrs.offer.photos[i]);
+
+      // var img = cardElement.querySelector('.popup__photo').cloneNode(true);
+      // img.setAttribute('src', parametrs.offer.photos[i]);
+
+      cardElement.querySelector('.popup__photos').appendChild(img);
+    }
+  };
+  addPhotos();
+
+  return cardElement;
+};
+
+var renderCard = function () {
+  var fragmentCard = document.createDocumentFragment();
+  fragmentCard.appendChild(createCard(ads[0]));
+  var map = document.querySelector('.map');
+  var last = map.querySelector('.map__filters-container');
+  map.insertBefore(fragmentCard, last);
+};
+
+renderCard();
+
+// ------------------------ 4-1 ---------------------------------------------------------------------------------
 // Все <input> и <select> формы .ad-form заблокированы с помощью атрибута disabled (тз 1.1.)
 
 var form = document.querySelector('.ad-form');
@@ -130,13 +227,13 @@ var activationPage = function () {
   document.querySelector('.map').classList.remove('map--faded');
   document.querySelector('.ad-form').classList.remove('ad-form--disabled');
   for (var x = 0; x < elements.length; x++) {
-    elements[x].removeAttribute('disabled', true);
+    elements[x].removeAttribute('disabled', '');
   }
 
   var mapFilters = document.querySelector('.map__filters');
   var mapFiltersElements = Array.from(mapFilters.getElementsByTagName('*'));
   for (var g = 0; g < mapFiltersElements.length; g++) {
-    mapFiltersElements[g].removeAttribute('disabled', true);
+    mapFiltersElements[g].removeAttribute('disabled', '');
   }
 
   pinX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
@@ -191,3 +288,5 @@ capacity.addEventListener('change', function () {
     checkCapacity(capacity[j]);
   }
 });
+
+// ------------------------ 4-2 ---------------------------------------------------------------------------------
