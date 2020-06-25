@@ -71,8 +71,6 @@ var createAds = function () {
 
 var ads = createAds();
 
-// console.log(ads);
-
 // -----------------------------------------------
 
 // document.querySelector('.map').classList.remove('map--faded');
@@ -80,20 +78,47 @@ var ads = createAds();
 // -----------------------------------------------
 var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
+var removeHidden = function (m) {
+  for (var i = 0; i < card.length; i++) {
+    if (
+      m.src === card[i].querySelector('img').src
+    ) {
+      card[i].classList.remove('visually-hidden');
+    } else {
+      card[i].classList.add('visually-hidden');
+    }
+  }
+};
+
+var removeHiddenHandler = function (evt) {
+  removeHidden(evt.target);
+};
+
+var onCardEscPress = function (evt) {
+  if (evt.key === 'Escape') {
+    evt.preventDefault();
+    setHidden();
+  }
+};
+
 var renderPin = function (parametrs) {
   var pinElement = similarPinTemplate.cloneNode(true);
   pinElement.style.left = parametrs.location.x - PIN_HALF_WIDTH + 'px';
   pinElement.style.top = parametrs.location.y - PIN_HEIGHT + 'px';
   pinElement.children[0].src = parametrs.author.avatar;
   pinElement.children[0].alt = parametrs.offer.title;
+  pinElement.classList.add('visually-hidden');
   return pinElement;
 };
 
 var renderPins = function () {
   var fragmentPins = document.createDocumentFragment();
   for (var i = 0; i < ads.length; i++) {
-    fragmentPins.appendChild(renderPin(ads[i]));
+    var pin = renderPin(ads[i]);
+    fragmentPins.appendChild(pin);
+    pin.addEventListener('click', removeHiddenHandler);
   }
+  document.addEventListener('keydown', onCardEscPress);
   var map = document.querySelector('.map');
   map.appendChild(fragmentPins);
 };
@@ -239,23 +264,28 @@ address.value = pinMainX + ', ' + pinMainY;
 
 // Активация страницы
 var pinMain = document.querySelector('.map__pin--main');
+var pins = document.querySelectorAll('.map__pin');
+
+var showPins = function () {
+  for (var i = 0; i < pins.length; i++) {
+    pins[i].classList.remove('visually-hidden');
+  }
+};
 
 var activationPage = function () {
+  showPins();
   document.querySelector('.map').classList.remove('map--faded');
   document.querySelector('.ad-form').classList.remove('ad-form--disabled');
   for (var x = 0; x < elements.length; x++) {
     elements[x].removeAttribute('disabled', '');
   }
-
   var mapFilters = document.querySelector('.map__filters');
   var mapFiltersElements = Array.from(mapFilters.getElementsByTagName('*'));
   for (var g = 0; g < mapFiltersElements.length; g++) {
     mapFiltersElements[g].removeAttribute('disabled', '');
   }
-
   pinMainX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
   pinMainY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_HEIGHT;
-
   address.value = pinMainX + ', ' + pinMainY;
   // валидация сторки с адресом
   address.setAttribute('disabled', '');
@@ -273,8 +303,7 @@ pinMain.addEventListener('keydown', function (evt) {
   }
 });
 
-// Непростая валидация: зависимость кол-ва гостей от кол-ва комнат
-
+// Валидация: зависимость кол-ва гостей от кол-ва комнат
 var DISABLED_ROOMS = {
   '1': ['1'],
   '2': ['1', '2'],
@@ -310,7 +339,6 @@ capacity.addEventListener('change', function () {
 // ------------------------ 4-2 ---------------------------------------------------------------------------------
 // Карточки объявлений
 var card = document.querySelectorAll('.map__card');
-var pin = document.querySelectorAll('.map__pin');
 
 var setHidden = function () {
   for (var i = 0; i < card.length; i++) {
@@ -319,52 +347,38 @@ var setHidden = function () {
 };
 setHidden();
 
-var removeHidden = function (m) { console.log(card);
-  for (var i = 0; i < card.length; i++) {
-    if (
-      m.src === card[i].querySelector('img').src
-    ) { console.log('a');
-      card[i].classList.remove('visually-hidden');
-    } else { console.log('b');
-      card[i].classList.add('visually-hidden');
-    }
-  }
-};
+// перенесено в renderPins
+// var removeHidden = function (m) {
+//   for (var i = 0; i < card.length; i++) {
+//     if (
+//       m.src === card[i].querySelector('img').src
+//     ) {
+//       card[i].classList.remove('visually-hidden');
+//     } else {
+//       card[i].classList.add('visually-hidden');
+//     }
+//   }
+// };
 
-var removeHiddenHandler = function (evt) {
-  removeHidden(evt.target);
-};
+// var removeHiddenHandler = function (evt) {
+//   removeHidden(evt.target);
+// };
 
-var onCardEscPress = function (evt) {
-  if (evt.key === 'Escape') {
-    evt.preventDefault();
-    setHidden();
-  }
-};
+// var onCardEscPress = function (evt) {
+//   if (evt.key === 'Escape') {
+//     evt.preventDefault();
+//     setHidden();
+//   }
+// };
 
-var openCard = function () {
-  for (var i = 0; i < pin.length; i++) {
-    pin[i].addEventListener('click', removeHiddenHandler);
-  }
+// var openCard = function () {
+//   for (var i = 0; i < pin.length; i++) {
+//     pin[i].addEventListener('click', removeHiddenHandler);
+//   }
 
-  document.addEventListener('keydown', onCardEscPress);
-};
-openCard();
-
-var openCardEnter = function () {
-  for (var i = 0; i < pin.length; i++) {
-    console.log(1);
-    pin[i].addEventListener('keydown', function (evt) {
-      console.log(2);
-      if (evt.keyCode === ENTER) {
-        console.log(3);
-        removeHidden(evt.target.children[0]);
-        console.log(4);
-      }
-    });
-  }
-};
-openCardEnter();
+//   document.addEventListener('keydown', onCardEscPress);
+// };
+// openCard();
 
 var closeCard = function () {
   for (var i = 0; i < card.length; i++) {
@@ -375,7 +389,6 @@ var closeCard = function () {
 closeCard();
 
 // Валидация цены от типа комнаты - ТЗ 3.3.
-
 var MIN_PRICE = {
   'bungalo': '0',
   'flat': '1000',
@@ -394,7 +407,6 @@ typeRoom.addEventListener('change', function (evt) {
 });
 
 // Валидация времени заезда и времени выезда - ТЗ 3.5.
-
 var TIME = {
   '12:00': '12:00',
   '13:00': '13:00',
