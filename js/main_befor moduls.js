@@ -11,7 +11,6 @@ var PIN_HEIGHT = 70;
 var NUMBER_OF_ADS = 8;
 var PIN_MAIN_HALF = 31;
 var PIN_MAIN_HEIGHT = 62 + 22;
-var ENTER = 13;
 var mainButton = 0;
 
 var getRandom = function (lower, upper) {
@@ -97,7 +96,7 @@ var removeHiddenHandler = function (evt) {
 var onCardEscPress = function (evt) {
   if (evt.key === 'Escape') {
     evt.preventDefault();
-    setHidden();
+    hiddenCard();
   }
 };
 
@@ -236,6 +235,15 @@ var renderCards = function () {
 };
 renderCards();
 
+var card = document.querySelectorAll('.map__card');
+
+var hiddenCard = function () {
+  for (var i = 0; i < card.length; i++) {
+    card[i].classList.add('visually-hidden');
+  }
+};
+hiddenCard();
+
 // ------------------------ 4-1 ---------------------------------------------------------------------------------
 // Все <input> и <select> формы .ad-form заблокированы с помощью атрибута disabled (тз 1.1.)
 
@@ -252,10 +260,9 @@ var setDisabled = function (elem) {
     elem[a].setAttribute('disabled', '');
   }
 };
-
 setDisabled(elements);
 
-// Заполнение поля адреса
+// Заполнение поля адреса - форма
 var address = document.querySelector('#address');
 var pinMainX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
 var pinMainY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_HALF;
@@ -287,7 +294,6 @@ var activationPage = function () {
   pinMainX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
   pinMainY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_HEIGHT;
   address.value = pinMainX + ', ' + pinMainY;
-  // валидация сторки с адресом
   address.setAttribute('disabled', '');
 };
 
@@ -298,12 +304,12 @@ pinMain.addEventListener('mousedown', function (evt) {
 });
 
 pinMain.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ENTER) {
+  if (evt.key === 'Enter') {
     activationPage();
   }
 });
 
-// Валидация: зависимость кол-ва гостей от кол-ва комнат
+// Валидация: зависимость кол-ва гостей от кол-ва комнат  - форма
 var DISABLED_ROOMS = {
   '1': ['1'],
   '2': ['1', '2'],
@@ -338,14 +344,14 @@ capacity.addEventListener('change', function () {
 
 // ------------------------ 4-2 ---------------------------------------------------------------------------------
 // Карточки объявлений
-var card = document.querySelectorAll('.map__card');
+// var card = document.querySelectorAll('.map__card');
 
-var setHidden = function () {
-  for (var i = 0; i < card.length; i++) {
-    card[i].classList.add('visually-hidden');
-  }
-};
-setHidden();
+// var hiddenCard = function () {
+//   for (var i = 0; i < card.length; i++) {
+//     card[i].classList.add('visually-hidden');
+//   }
+// };
+// hiddenCard();
 
 // перенесено в renderPins
 // var removeHidden = function (m) {
@@ -367,7 +373,7 @@ setHidden();
 // var onCardEscPress = function (evt) {
 //   if (evt.key === 'Escape') {
 //     evt.preventDefault();
-//     setHidden();
+//     hiddenCard();
 //   }
 // };
 
@@ -383,12 +389,12 @@ setHidden();
 var closeCard = function () {
   for (var i = 0; i < card.length; i++) {
     var buttonClose = card[i].querySelector('.popup__close');
-    buttonClose.addEventListener('click', setHidden);
+    buttonClose.addEventListener('click', hiddenCard);
   }
 };
 closeCard();
 
-// Валидация цены от типа комнаты - ТЗ 3.3.
+// Валидация цены от типа комнаты - ТЗ 3.3.  - форма
 var MIN_PRICE = {
   'bungalo': '0',
   'flat': '1000',
@@ -406,7 +412,7 @@ typeRoom.addEventListener('change', function (evt) {
   price.setAttribute('placeholder', targetValue);
 });
 
-// Валидация времени заезда и времени выезда - ТЗ 3.5.
+// Валидация времени заезда и времени выезда - ТЗ 3.5.  - форма
 var TIME = {
   '12:00': '12:00',
   '13:00': '13:00',
