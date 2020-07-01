@@ -1,5 +1,4 @@
 'use strict';
-// ------------------------ 3-1 ---------------------------------------------------------------------------------
 (function () {
   var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
   var PHOTOS_OBJECTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
@@ -56,11 +55,14 @@
     return template;
   };
 
-  window.createAds = function () {
-    var cards = [];
-    for (var i = 0; i < NUMBER_OF_ADS; i++) {
-      cards.push(createOneAd(i));
+  window.data = {
+    createAds: function () {
+      var cards = [];
+      for (var i = 0; i < NUMBER_OF_ADS; i++) {
+        cards.push(createOneAd(i));
+      }
+      return cards;
     }
-    return cards;
   };
+
 })();
