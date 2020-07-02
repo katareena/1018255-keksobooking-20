@@ -39,7 +39,7 @@
     address.value = pinMainX + ', ' + pinMainY;
   };
 
-  var activationPage = function () {
+  var setActivationSetup = function () {
     showPins();
     document.querySelector('.map').classList.remove('map--faded');
     document.querySelector('.ad-form').classList.remove('ad-form--disabled');
@@ -55,20 +55,58 @@
     address.setAttribute('disabled', '');
   };
 
-  pinMain.addEventListener('mousedown', function (evt) {
+  // pinMain.addEventListener('mousedown', function (evt) {
+  //   if (evt.button === mainButton) {
+  //     setActivationSetup();
+  //     // pinMain.addEventListener('mousedown', moveMouse);
+  //   }
+  // });
+
+  var activationPage = function (evt) {
     if (evt.button === mainButton) {
-      activationPage();
-      // pinMain.addEventListener('mousedown', moveMouse);
+      setActivationSetup();
     }
-  });
+  };
+
+  // pinMain.addEventListener('mousedown', function () {
+  //   if (map.classList.contains('map--faded')) {
+  //     console.log(1);
+
+  //     pinMain.addEventListener('mousedown', activationPage);
+  //   } else {
+  //     console.log(2);
+
+  //     pinMain.removeEventListener('mousedown', activationPage);
+  //     console.log(3);
+  //     pinMain.addEventListener('mousedown', moveMouse);
+  //   }
+  // });
+
 
   pinMain.addEventListener('keydown', function (evt) {
     if (evt.key === 'Enter') {
-      activationPage();
+      setActivationSetup();
     }
   });
 
   // Движение главного пина
+  var pin = document.querySelector('.map__pin--main');
+  var map = document.querySelector('.map');
+  var PIN_HALF_WIDTH = 32;
+  var PIN_HEIGHT = 84;
+  var mapTop = 130;
+  var mapLeft = 0;
+  var mapRight = 1200;
+  var mapBottom = 630;
+
+  var limits = {
+    top: map.offsetTop + mapTop - PIN_HEIGHT,
+    right: mapRight + PIN_HALF_WIDTH - pin.offsetWidth,
+    bottom: mapBottom - PIN_HEIGHT,
+    left: mapLeft + PIN_HALF_WIDTH - pin.offsetWidth
+  };
+
+
   // var moveMouse = function (evt) {
   //   evt.preventDefault();
 
@@ -90,13 +128,31 @@
   //       y: moveEvt.clientY
   //     };
 
-  //     pinMain.style.top = (pinMain.offsetTop - shift.y) + 'px';
-  //     pinMain.style.left = (pinMain.offsetLeft - shift.x) + 'px';
+  //     var coordinates = {
+  //       x: pinMain.offsetLeft - shift.x,
+  //       y: pinMain.offsetTop - shift.y
+  //     };
+
+  //     if (coordinates.x < limits.left) {
+  //       coordinates.x = limits.left;
+  //     } else if (coordinates.x > limits.right) {
+  //       coordinates.x = limits.right;
+  //     }
+
+  //     if (coordinates.y < limits.top) {
+  //       coordinates.y = limits.top;
+  //     } else if (coordinates.y > limits.bottom) {
+  //       coordinates.y = limits.bottom;
+  //     }
+
+  //     pinMain.style.top = coordinates.y + 'px';
+  //     pinMain.style.left = coordinates.x + 'px';
+
+  //     setAdress();
   //   };
 
   //   var onMouseUp = function (upEvt) {
   //     upEvt.preventDefault();
-
   //     document.removeEventListener('mousemove', onMouseMove);
   //     document.removeEventListener('mouseup', onMouseUp);
   //   };
@@ -105,68 +161,62 @@
   //   document.addEventListener('mouseup', onMouseUp);
   // };
 
-  var pin = document.querySelector('.map__pin--main');
-  var map = document.querySelector('.map');
-  var PIN_HALF_WIDTH = 32;
-
-  var limits = {
-    top: map.offsetTop + 130,
-    right: 1200 + PIN_HALF_WIDTH - pin.offsetWidth,
-    bottom: 630,
-    left: 0 + PIN_HALF_WIDTH - pin.offsetWidth
-  };
-
   pinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
+    if (map.classList.contains('map--faded')) { // активация страницы
+      activationPage(evt);
+    } else { // движение главного пина после активации
 
-    var onMouseMove = function (moveEvt) {
-      moveEvt.preventDefault();
-
-      var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
+      var startCoords = {
+        x: evt.clientX,
+        y: evt.clientY
       };
 
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
+      var onMouseMove = function (moveEvt) {
+        moveEvt.preventDefault();
+
+        var shift = {
+          x: startCoords.x - moveEvt.clientX,
+          y: startCoords.y - moveEvt.clientY
+        };
+
+        startCoords = {
+          x: moveEvt.clientX,
+          y: moveEvt.clientY
+        };
+
+        // координаты после смещения мыши
+        var coordinates = {
+          x: pinMain.offsetLeft - shift.x,
+          y: pinMain.offsetTop - shift.y
+        };
+
+        if (coordinates.x < limits.left) {
+          coordinates.x = limits.left;
+        } else if (coordinates.x > limits.right) {
+          coordinates.x = limits.right;
+        }
+
+        if (coordinates.y < limits.top) {
+          coordinates.y = limits.top;
+        } else if (coordinates.y > limits.bottom) {
+          coordinates.y = limits.bottom;
+        }
+
+        pinMain.style.top = coordinates.y + 'px';
+        pinMain.style.left = coordinates.x + 'px';
+
+        setAdress();
       };
 
-      // координаты после смещения мыши
-      var coordinates = {
-        x: pinMain.offsetLeft - shift.x,
-        y: pinMain.offsetTop - shift.y
+      var onMouseUp = function (upEvt) {
+        upEvt.preventDefault();
+        pinMain.removeEventListener('mousedown', activationPage);
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
       };
-
-      if (coordinates.x < limits.left) {
-        coordinates.x = limits.left;
-      } else if (coordinates.x > limits.right) {
-        coordinates.x = limits.right;
-      }
-
-      if (coordinates.y < limits.top) {
-        coordinates.y = limits.top;
-      } else if (coordinates.y > limits.bottom) {
-        coordinates.y = limits.bottom;
-      }
-
-      pinMain.style.top = coordinates.y + 'px';
-      pinMain.style.left = coordinates.x + 'px';
-
-      setAdress();
-    };
-
-    var onMouseUp = function (upEvt) {
-      upEvt.preventDefault();
-
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    };
+    }
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
