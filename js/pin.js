@@ -1,7 +1,7 @@
 'use strict';
 (function () {
-  var PIN_HALF_WIDTH = 25;
-  var PIN_HEIGHT = 70;
+  var PIN_HALF_WIDTH = 32;
+  var PIN_HEIGHT = 84;
   var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var ads = window.data.createAds();
 
