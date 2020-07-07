@@ -83,7 +83,7 @@
   // };
   // renderCards();
 
-  window.load(function (ads) {
+  var successHandler = function (ads) {
     var fragmentCards = document.createDocumentFragment();
     for (var i = 0; i < ads.length; i++) {
       fragmentCards.appendChild(createCard(ads[i]));
@@ -91,7 +91,31 @@
     var map = document.querySelector('.map');
     var last = map.querySelector('.map__filters-container');
     map.insertBefore(fragmentCards, last);
-  }, function () {});
+  };
+
+  var errorHandler = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
+  window.load(successHandler, errorHandler);
+
+  // window.load(function (ads) {
+  //   var fragmentCards = document.createDocumentFragment();
+  //   for (var i = 0; i < ads.length; i++) {
+  //     fragmentCards.appendChild(createCard(ads[i]));
+  //   }
+  //   var map = document.querySelector('.map');
+  //   var last = map.querySelector('.map__filters-container');
+  //   map.insertBefore(fragmentCards, last);
+  // }, function () {});
 
 
   // Открыть объявление
