@@ -5,7 +5,7 @@
   var similarPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var ads = window.data.createAds();
 
-  // Создание и отрисовка пинов
+  // Создание и отрисовка пинов. Навешивание обработчиков закрытия и открытия карточки
   var createPin = function (parametrs) {
     var pinElement = similarPinTemplate.cloneNode(true);
     pinElement.style.left = parametrs.location.x - PIN_HALF_WIDTH + 'px';
@@ -22,8 +22,9 @@
       var pin = createPin(ads[i]);
       fragmentPins.appendChild(pin);
       pin.addEventListener('click', window.card.removeHiddenHandler);
+      document.addEventListener('click', window.card.closeCard);
     }
-    document.addEventListener('keydown', window.map.onCardEscPress);
+    document.addEventListener('keydown', window.card.onCardEscPress);
     var map = document.querySelector('.map');
     map.appendChild(fragmentPins);
   };

@@ -1,7 +1,5 @@
 'use strict';
 (function () {
-  var ads = window.data.createAds();
-
   // Создание и отрисовка обьявления
   var similarCardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 
@@ -69,10 +67,23 @@
     addFeatures(cardElement, parametrs);
     addValue(cardElement.querySelector('.popup__description'), parametrs.offer.description);
     addPhotos(cardElement, parametrs);
+    cardElement.classList.add('visually-hidden');
     return cardElement;
   };
 
-  var renderCards = function () {
+  // var ads = window.data.createAds();
+  // var renderCards = function () {
+  //   var fragmentCards = document.createDocumentFragment();
+  //   for (var i = 0; i < ads.length; i++) {
+  //     fragmentCards.appendChild(createCard(ads[i]));
+  //   }
+  //   var map = document.querySelector('.map');
+  //   var last = map.querySelector('.map__filters-container');
+  //   map.insertBefore(fragmentCards, last);
+  // };
+  // renderCards();
+
+  window.load(function (ads) {
     var fragmentCards = document.createDocumentFragment();
     for (var i = 0; i < ads.length; i++) {
       fragmentCards.appendChild(createCard(ads[i]));
@@ -80,11 +91,12 @@
     var map = document.querySelector('.map');
     var last = map.querySelector('.map__filters-container');
     map.insertBefore(fragmentCards, last);
-  };
-  renderCards();
+  }, function () {});
+
 
   // Открыть объявление
   var removeHidden = function (m) {
+    var card = document.querySelectorAll('.map__card');
     for (var i = 0; i < card.length; i++) {
       if (
         m.src === card[i].querySelector('img').src
@@ -96,17 +108,17 @@
     }
   };
 
+  // Закрыть объявление
+  // var card = document.querySelectorAll('.map__card');
+
   window.card = {
+
     removeHiddenHandler: function (evt) {
       removeHidden(evt.target);
-    }
-  };
+    },
 
-  // Закрыть объявление
-  var card = document.querySelectorAll('.map__card');
-
-  window.map = {
     hiddenCard: function () {
+      var card = document.querySelectorAll('.map__card');
       for (var i = 0; i < card.length; i++) {
         card[i].classList.add('visually-hidden');
       }
@@ -115,18 +127,27 @@
     onCardEscPress: function (evt) {
       if (evt.key === 'Escape') {
         evt.preventDefault();
-        window.map.hiddenCard();
+        window.card.hiddenCard();
+      }
+    },
+
+    closeCard: function () {
+      var card = document.querySelectorAll('.map__card');
+      for (var i = 0; i < card.length; i++) {
+        var buttonClose = card[i].querySelector('.popup__close');
+        buttonClose.addEventListener('click', window.card.hiddenCard);
       }
     }
   };
-  window.map.hiddenCard();
+  window.card.hiddenCard();
 
-  var closeCard = function () {
-    for (var i = 0; i < card.length; i++) {
-      var buttonClose = card[i].querySelector('.popup__close');
-      buttonClose.addEventListener('click', window.map.hiddenCard);
-    }
-  };
-  closeCard();
+  // var closeCard = function () {
+  //   var card = document.querySelectorAll('.map__card');
+  //   for (var i = 0; i < card.length; i++) {
+  //     var buttonClose = card[i].querySelector('.popup__close');
+  //     buttonClose.addEventListener('click', window.card.hiddenCard);
+  //   }
+  // };
+  // closeCard();
 
 })();
