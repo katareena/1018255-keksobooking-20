@@ -15,31 +15,22 @@
       pinElement.children[0].src = parametrs.author.avatar;
       pinElement.children[0].alt = parametrs.offer.title;
       // pinElement.classList.add('visually-hidden');
+      pinElement.addEventListener('click', window.card.removeHiddenHandler);
+      document.addEventListener('click', window.card.closeCard);
+      document.addEventListener('keydown', window.card.onCardEscPress);
+
       return pinElement;
     },
 
-    addHendlers: function (ads) {
+    renderPins: function (ads) {
+      var fragmentPins = document.createDocumentFragment();
       for (var i = 0; i < ads.length; i++) {
         var pin = window.pin.createPin(ads[i]);
-        pin.addEventListener('click', window.card.removeHiddenHandler);
-        document.addEventListener('click', window.card.closeCard);
+        fragmentPins.appendChild(pin);
       }
-      document.addEventListener('keydown', window.card.onCardEscPress);
+      var map = document.querySelector('.map');
+      map.appendChild(fragmentPins);
     }
-
-    // renderPins: function () {
-    //   var fragmentPins = document.createDocumentFragment();
-    //   for (var i = 0; i < ads.length; i++) {
-    //     var pin = window.pin.createPin(ads[i]);
-    //     fragmentPins.appendChild(pin);
-    //     pin.addEventListener('click', window.card.removeHiddenHandler);
-    //     document.addEventListener('click', window.card.closeCard);
-    //   }
-    //   document.addEventListener('keydown', window.card.onCardEscPress);
-    //   var map = document.querySelector('.map');
-    //   map.appendChild(fragmentPins);
-    // }
   };
-  // window.pin.renderPins();
 
 })();
