@@ -55,22 +55,6 @@
     }
   };
 
-  var createCard = function (parametrs) {
-    var cardElement = similarCardTemplate.cloneNode(true);
-    cardElement.querySelector('.popup__avatar').src = parametrs.author.avatar;
-    addValue(cardElement.querySelector('.popup__title'), parametrs.offer.title);
-    addValue(cardElement.querySelector('.popup__text--address'), parametrs.offer.address);
-    addValue(cardElement.querySelector('.popup__text--price'), parametrs.offer.price + '₽/ночь');
-    addValue(cardElement.querySelector('.popup__type'), TYPES[parametrs.offer.type]);
-    addTextCapacity(cardElement, parametrs);
-    addValue(cardElement.querySelector('.popup__text--time'), 'Заезд после ' + parametrs.offer.checkin + ', выезд до ' + parametrs.offer.checkout);
-    addFeatures(cardElement, parametrs);
-    addValue(cardElement.querySelector('.popup__description'), parametrs.offer.description);
-    addPhotos(cardElement, parametrs);
-    cardElement.classList.add('visually-hidden');
-    return cardElement;
-  };
-
   // var ads = window.data.createAds();
   // var renderCards = function () {
   //   var fragmentCards = document.createDocumentFragment();
@@ -82,40 +66,6 @@
   //   map.insertBefore(fragmentCards, last);
   // };
   // renderCards();
-
-  var successHandler = function (ads) {
-    var fragmentCards = document.createDocumentFragment();
-    for (var i = 0; i < ads.length; i++) {
-      fragmentCards.appendChild(createCard(ads[i]));
-    }
-    var map = document.querySelector('.map');
-    var last = map.querySelector('.map__filters-container');
-    map.insertBefore(fragmentCards, last);
-  };
-
-  var errorHandler = function (errorMessage) {
-    var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
-    node.style.position = 'absolute';
-    node.style.left = 0;
-    node.style.right = 0;
-    node.style.fontSize = '30px';
-
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
-  };
-
-  window.load(successHandler, errorHandler);
-
-  // window.load(function (ads) {
-  //   var fragmentCards = document.createDocumentFragment();
-  //   for (var i = 0; i < ads.length; i++) {
-  //     fragmentCards.appendChild(createCard(ads[i]));
-  //   }
-  //   var map = document.querySelector('.map');
-  //   var last = map.querySelector('.map__filters-container');
-  //   map.insertBefore(fragmentCards, last);
-  // }, function () {});
 
 
   // Открыть объявление
@@ -132,10 +82,22 @@
     }
   };
 
-  // Закрыть объявление
-  // var card = document.querySelectorAll('.map__card');
-
   window.card = {
+    createCard: function (parametrs) {
+      var cardElement = similarCardTemplate.cloneNode(true);
+      cardElement.querySelector('.popup__avatar').src = parametrs.author.avatar;
+      addValue(cardElement.querySelector('.popup__title'), parametrs.offer.title);
+      addValue(cardElement.querySelector('.popup__text--address'), parametrs.offer.address);
+      addValue(cardElement.querySelector('.popup__text--price'), parametrs.offer.price + '₽/ночь');
+      addValue(cardElement.querySelector('.popup__type'), TYPES[parametrs.offer.type]);
+      addTextCapacity(cardElement, parametrs);
+      addValue(cardElement.querySelector('.popup__text--time'), 'Заезд после ' + parametrs.offer.checkin + ', выезд до ' + parametrs.offer.checkout);
+      addFeatures(cardElement, parametrs);
+      addValue(cardElement.querySelector('.popup__description'), parametrs.offer.description);
+      addPhotos(cardElement, parametrs);
+      cardElement.classList.add('visually-hidden');
+      return cardElement;
+    },
 
     removeHiddenHandler: function (evt) {
       removeHidden(evt.target);
@@ -164,14 +126,5 @@
     }
   };
   window.card.hiddenCard();
-
-  // var closeCard = function () {
-  //   var card = document.querySelectorAll('.map__card');
-  //   for (var i = 0; i < card.length; i++) {
-  //     var buttonClose = card[i].querySelector('.popup__close');
-  //     buttonClose.addEventListener('click', window.card.hiddenCard);
-  //   }
-  // };
-  // closeCard();
 
 })();

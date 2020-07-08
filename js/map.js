@@ -62,9 +62,47 @@
   //   }
   // });
 
+
+  var successHandler = function (ads) {
+    var fragmentCards = document.createDocumentFragment();
+    var fragmentPins = document.createDocumentFragment();
+    for (var i = 0; i < ads.length; i++) {
+      fragmentCards.appendChild(window.card.createCard(ads[i]));
+      fragmentPins.appendChild(window.pin.createPin(ads[i]));
+    }
+    var map = document.querySelector('.map');
+    var last = map.querySelector('.map__filters-container');
+    map.insertBefore(fragmentCards, last);
+    map.appendChild(fragmentPins);
+  };
+
+  // var successHandler = function (ads) {
+  //   var fragmentCards = document.createDocumentFragment();
+  //   for (var i = 0; i < ads.length; i++) {
+  //     fragmentCards.appendChild(window.card.createCard(ads[i]));
+  //   }
+  //   var map = document.querySelector('.map');
+  //   var last = map.querySelector('.map__filters-container');
+  //   map.insertBefore(fragmentCards, last);
+  // };
+
+  var errorHandler = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
   var activationPage = function (evt) {
     if (evt.button === mainButton) {
       setActivationSetup();
+      window.load(successHandler, errorHandler);
+      window.pin.addHendlers();
     }
   };
 
