@@ -62,9 +62,34 @@
   //   }
   // });
 
+
+  var successHandler = function (ads) {
+    window.pin.renderPins(ads);
+    var fragmentCards = document.createDocumentFragment();
+    for (var i = 0; i < ads.length; i++) {
+      fragmentCards.appendChild(window.card.createCard(ads[i]));
+    }
+    var map = document.querySelector('.map');
+    var last = map.querySelector('.map__filters-container');
+    map.insertBefore(fragmentCards, last);
+  };
+
+  var errorHandler = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
   var activationPage = function (evt) {
     if (evt.button === mainButton) {
       setActivationSetup();
+      window.load(successHandler, errorHandler);
     }
   };
 
@@ -105,61 +130,6 @@
     bottom: mapBottom - PIN_HEIGHT,
     left: mapLeft + PIN_HALF_WIDTH - pin.offsetWidth
   };
-
-
-  // var moveMouse = function (evt) {
-  //   evt.preventDefault();
-
-  //   var startCoords = {
-  //     x: evt.clientX,
-  //     y: evt.clientY
-  //   };
-
-  //   var onMouseMove = function (moveEvt) {
-  //     moveEvt.preventDefault();
-
-  //     var shift = {
-  //       x: startCoords.x - moveEvt.clientX,
-  //       y: startCoords.y - moveEvt.clientY
-  //     };
-
-  //     startCoords = {
-  //       x: moveEvt.clientX,
-  //       y: moveEvt.clientY
-  //     };
-
-  //     var coordinates = {
-  //       x: pinMain.offsetLeft - shift.x,
-  //       y: pinMain.offsetTop - shift.y
-  //     };
-
-  //     if (coordinates.x < limits.left) {
-  //       coordinates.x = limits.left;
-  //     } else if (coordinates.x > limits.right) {
-  //       coordinates.x = limits.right;
-  //     }
-
-  //     if (coordinates.y < limits.top) {
-  //       coordinates.y = limits.top;
-  //     } else if (coordinates.y > limits.bottom) {
-  //       coordinates.y = limits.bottom;
-  //     }
-
-  //     pinMain.style.top = coordinates.y + 'px';
-  //     pinMain.style.left = coordinates.x + 'px';
-
-  //     setAdress();
-  //   };
-
-  //   var onMouseUp = function (upEvt) {
-  //     upEvt.preventDefault();
-  //     document.removeEventListener('mousemove', onMouseMove);
-  //     document.removeEventListener('mouseup', onMouseUp);
-  //   };
-
-  //   document.addEventListener('mousemove', onMouseMove);
-  //   document.addEventListener('mouseup', onMouseUp);
-  // };
 
   pinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
