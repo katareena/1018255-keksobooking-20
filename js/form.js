@@ -3,11 +3,15 @@
   var PIN_MAIN_HALF = 31;
 
   // Заполнение поля адреса
-  var address = document.querySelector('#address');
-  var pinMainX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
-  var pinMainY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_HALF;
+  var setAdress = function () {
+    var address = document.querySelector('#address');
+    var pinMainX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
+    var pinMainY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_HALF;
 
-  address.value = pinMainX + ', ' + pinMainY;
+    address.value = pinMainX + ', ' + pinMainY;
+  };
+  setAdress();
+
 
   // Валидация: зависимость кол-ва гостей от кол-ва комнат - форма
   var DISABLED_ROOMS = {
@@ -83,5 +87,91 @@
       timein[j].selected = TIME[evt.target.value].includes(timein.options[j].value);
     }
   });
+
+  // Отправка данных на сервер
+  var main = document.querySelector('main');
+  var mapArray = Array.from(document.querySelector('.map__filters'));
+  var formArray = Array.from(document.querySelector('.ad-form').querySelectorAll('fieldset'));
+  var elements = mapArray.concat(formArray);
+
+  var errorHandler = function () {
+    var messageError = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
+    main.appendChild(messageError);
+    var errorButton = messageError.querySelector('.error__button');
+    errorButton.addEventListener('click', function () {
+      messageError.remove();
+    });
+    document.addEventListener('keydown', function (evt) {
+      if (evt.key === 'Escape') {
+        messageError.remove();
+      }
+    });
+    window.addEventListener('click', function (evt) {
+      if (!errorButton.contains(evt.target)) {
+        messageError.remove();
+      }
+    });
+  };
+
+  var successHandler = function () {
+    var messageSuccess = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
+    main.appendChild(messageSuccess);
+    setAdress();
+    document.addEventListener('keydown', function (evt) {
+      if (evt.key === 'Escape') {
+        messageSuccess.remove();
+      }
+    });
+    messageSuccess.addEventListener('click', function () {
+      messageSuccess.remove();
+    });
+  };
+
+  var removePins = function () {
+    var pins = document.querySelectorAll('.map__pin');
+    for (var i = 0; i < pins.length; i++) {
+      if (!pins[i].classList.contains('map__pin--main')) {
+        pins[i].remove();
+      }
+    }
+  };
+
+  var removeCards = function () {
+    var cards = document.querySelectorAll('.map-card');
+    for (var i = 0; i < cards.length; i++) {
+      cards[i].remove();
+    }
+  };
+
+  var deactivationPage = function () {
+    removePins();
+    removeCards();
+    form.reset();
+    document.querySelector('.map').classList.add('map--faded');
+    document.querySelector('.ad-form').classList.add('ad-form--disabled');
+    for (var x = 0; x < elements.length; x++) {
+      elements[x].setAttribute('disabled', '');
+    }
+  };
+
+  form.addEventListener('submit', function (evt) {
+    console.log(new FormData(form));
+    evt.preventDefault();
+
+    window.upload(new FormData(form), errorHandler, function () {
+      deactivationPage();
+      successHandler();
+
+    });
+
+  });
+
+  var clickOnReset = function () {
+    var errorReset = form.querySelector('.ad-form__reset');
+    errorReset.addEventListener('click', function () {
+      deactivationPage();
+    });
+  };
+  clickOnReset();
 
 })();
