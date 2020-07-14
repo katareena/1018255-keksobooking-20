@@ -46,7 +46,15 @@
     }
     setAddressPin();
     address.setAttribute('readonly', '');
+    window.form.disabledCapacity();
+
+    // if (!document.querySelector('#capacity').children.value.textContent === '1') {
+    //   document.querySelector('#capacity').children.setAttribute('disabled', '');
+    // }
+
+
   };
+  // console.log(document.querySelector('#capacity').children.classList.contains(''));
 
   var successHandler = function (ads) {
     window.pin.renderPins(ads);
@@ -74,14 +82,14 @@
   var activationPage = function (evt) {
     if (evt.button === mainButton) {
       setActivationSetup();
-      window.server('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
+      window.operateData('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
     }
   };
 
   pinMain.addEventListener('keydown', function (evt) {
     if (evt.key === 'Enter') {
       setActivationSetup();
-      window.server('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
+      window.operateData('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
     }
   });
 

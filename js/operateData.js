@@ -14,7 +14,7 @@
   };
   var TIMEOUT_IN_MS = 10000;
 
-  window.server = function (METHOD, URL, onError, onSuccess, data) {
+  window.operateData = function (METHOD, URL, onError, onSuccess, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 

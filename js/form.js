@@ -13,7 +13,7 @@
   setAddress();
 
 
-  // Валидация: зависимость кол-ва гостей от кол-ва комнат - форма
+  // Валидация: зависимость кол-ва гостей от кол-ва комнат
   var DISABLED_ROOMS = {
     '1': ['1'],
     '2': ['1', '2'],
@@ -35,18 +35,18 @@
     }
   };
 
-  rooms.addEventListener('change', function () {
-    for (var j = 0; j < capacity.options.length; j++) {
-      capacity[j].disabled = !DISABLED_ROOMS[rooms.value].includes(capacity.options[j].value);
-      checkCapacity(capacity[j]);
+  window.form = {
+    disabledCapacity: function () {
+      for (var j = 0; j < capacity.options.length; j++) {
+        capacity[j].disabled = !DISABLED_ROOMS[rooms.value].includes(capacity.options[j].value);
+        checkCapacity(capacity[j]);
+      }
     }
-  });
+  };
 
-  capacity.addEventListener('change', function () {
-    for (var j = 0; j < capacity.options.length; j++) {
-      checkCapacity(capacity[j]);
-    }
-  });
+  rooms.addEventListener('change', window.form.disabledCapacity);
+
+  capacity.addEventListener('change', window.form.disabledCapacity);
 
   // Валидация цены от типа комнаты - ТЗ 3.3.
   var MIN_PRICE = {
@@ -113,15 +113,18 @@
     });
   };
 
+  // почему обработчик не копится? он же нигде не удаляется
+  var messageSuccess = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
+  var onSuccessMassegeEscPress = function (evt) {
+    if (evt.key === 'Escape') {
+      messageSuccess.remove();
+    }
+  };
+
   var successHandler = function () {
-    var messageSuccess = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
     main.appendChild(messageSuccess);
     setAddress();
-    document.addEventListener('keydown', function (evt) {
-      if (evt.key === 'Escape') {
-        messageSuccess.remove();
-      }
-    });
+    document.addEventListener('keydown', onSuccessMassegeEscPress);
     messageSuccess.addEventListener('click', function () {
       messageSuccess.remove();
     });
@@ -166,7 +169,7 @@
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
 
-    window.server('POST', 'https://javascript.pages.academy/keksobooking', errorHandler, function () {
+    window.operateData('POST', 'https://javascript.pages.academy/keksobooking', errorHandler, function () {
       deactivationPage();
       successHandler();
     }, new FormData(form));
