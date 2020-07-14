@@ -3,14 +3,14 @@
   var PIN_MAIN_HALF = 31;
 
   // Заполнение поля адреса
-  var setAdress = function () {
+  var setAddress = function () {
     var address = document.querySelector('#address');
     var pinMainX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
     var pinMainY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_HALF;
 
     address.value = pinMainX + ', ' + pinMainY;
   };
-  setAdress();
+  setAddress();
 
 
   // Валидация: зависимость кол-ва гостей от кол-ва комнат - форма
@@ -116,7 +116,7 @@
   var successHandler = function () {
     var messageSuccess = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
     main.appendChild(messageSuccess);
-    setAdress();
+    setAddress();
     document.addEventListener('keydown', function (evt) {
       if (evt.key === 'Escape') {
         messageSuccess.remove();
@@ -143,10 +143,19 @@
     }
   };
 
+
+  var resetAddress = function () {
+    var pinMain = document.querySelector('.map__pin--main');
+    pinMain.style.left = '570px';
+    pinMain.style.top = '375px';
+    setAddress();
+  };
+
   var deactivationPage = function () {
     removePins();
     removeCards();
     form.reset();
+    resetAddress();
     document.querySelector('.map').classList.add('map--faded');
     document.querySelector('.ad-form').classList.add('ad-form--disabled');
     for (var x = 0; x < elements.length; x++) {
@@ -155,14 +164,12 @@
   };
 
   form.addEventListener('submit', function (evt) {
-    console.log(new FormData(form));
     evt.preventDefault();
 
-    window.upload(new FormData(form), errorHandler, function () {
+    window.server('POST', 'https://javascript.pages.academy/keksobooking', errorHandler, function () {
       deactivationPage();
       successHandler();
-
-    });
+    }, new FormData(form));
 
   });
 

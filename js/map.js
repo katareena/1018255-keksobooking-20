@@ -29,32 +29,23 @@
   // Активация страницы
   var address = document.querySelector('#address');
   var pinMain = document.querySelector('.map__pin--main');
-  // var pins = document.querySelectorAll('.map__pin');
   var pinMainX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
   var pinMainY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_HALF;
 
-
-  // var showPins = function () {
-  //   for (var i = 0; i < pins.length; i++) {
-  //     pins[i].classList.remove('visually-hidden');
-  //   }
-  // };
-
-  var setAdress = function () {
+  var setAddressPin = function () {
     pinMainX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
     pinMainY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_HEIGHT;
     address.value = pinMainX + ', ' + pinMainY;
   };
 
   var setActivationSetup = function () {
-    // showPins();
     document.querySelector('.map').classList.remove('map--faded');
     document.querySelector('.ad-form').classList.remove('ad-form--disabled');
     for (var x = 0; x < elements.length; x++) {
       elements[x].removeAttribute('disabled', '');
     }
-    setAdress();
-    address.setAttribute('disabled', '');
+    setAddressPin();
+    address.setAttribute('readonly', '');
   };
 
   var successHandler = function (ads) {
@@ -83,14 +74,14 @@
   var activationPage = function (evt) {
     if (evt.button === mainButton) {
       setActivationSetup();
-      window.load(successHandler, errorHandler);
+      window.server('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
     }
   };
 
   pinMain.addEventListener('keydown', function (evt) {
     if (evt.key === 'Enter') {
       setActivationSetup();
-      window.load(successHandler, errorHandler);
+      window.server('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
     }
   });
 
@@ -157,7 +148,7 @@
         pinMain.style.top = coordinates.y + 'px';
         pinMain.style.left = coordinates.x + 'px';
 
-        setAdress();
+        setAddressPin();
       };
 
       var onMouseUp = function (upEvt) {
