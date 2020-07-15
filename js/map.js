@@ -5,13 +5,6 @@
   var mainButton = 0;
 
   // ------------------------ 4-1 ---------------------------------------------------------------------------------
-  // Все <input> и <select> формы .ad-form заблокированы с помощью атрибута disabled (тз 1.1.)
-  // var inputsForm = Array.from(document.querySelector('.ad-form').getElementsByTagName('input'));
-  // var selectsForm = Array.from(document.querySelector('.ad-form').getElementsByTagName('select'));
-  // var inputsMap = Array.from(document.querySelector('.map__features').getElementsByTagName('input'));
-  // var selectsMap = Array.from(document.querySelector('.map__filters').getElementsByTagName('select'));
-  // var elements = inputsForm.concat(selectsForm, inputsMap, selectsMap);
-
   var mapArray = Array.from(document.querySelector('.map__filters'));
   var formArray = Array.from(document.querySelector('.ad-form').querySelectorAll('fieldset'));
   var elements = mapArray.concat(formArray);
@@ -47,14 +40,8 @@
     setAddressPin();
     address.setAttribute('readonly', '');
     window.form.disabledCapacity();
-
-    // if (!document.querySelector('#capacity').children.value.textContent === '1') {
-    //   document.querySelector('#capacity').children.setAttribute('disabled', '');
-    // }
-
-
+    window.form.setPrice();
   };
-  // console.log(document.querySelector('#capacity').children.classList.contains(''));
 
   var successHandler = function (ads) {
     window.pin.renderPins(ads);
@@ -83,6 +70,10 @@
     if (evt.button === mainButton) {
       setActivationSetup();
       window.operateData('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
+      var form = document.querySelector('.ad-form');
+      var errorReset = form.querySelector('.ad-form__reset');
+      errorReset.addEventListener('click', window.form.deactivationPageHandler);
+      form.addEventListener('submit', window.form.submitFormHandler);
     }
   };
 
@@ -90,6 +81,10 @@
     if (evt.key === 'Enter') {
       setActivationSetup();
       window.operateData('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
+      var form = document.querySelector('.ad-form');
+      var errorReset = form.querySelector('.ad-form__reset');
+      errorReset.addEventListener('click', window.form.deactivationPageHandler);
+      form.addEventListener('submit', window.form.submitFormHandler);
     }
   });
 
@@ -170,4 +165,7 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+
+
 })();

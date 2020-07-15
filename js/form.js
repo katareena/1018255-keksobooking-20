@@ -41,6 +41,39 @@
         capacity[j].disabled = !DISABLED_ROOMS[rooms.value].includes(capacity.options[j].value);
         checkCapacity(capacity[j]);
       }
+    },
+
+    setPrice: function () {
+      var price = form.querySelector('#price');
+      var targetValue = MIN_PRICE[typeRoom.value];
+      // установи то значение атрибута, которое соответствует ключу объекта и = value выбранного элемента
+      price.setAttribute('min', targetValue);
+      price.setAttribute('placeholder', targetValue);
+    },
+
+    deactivationPageHandler: function () {
+      removePins();
+      removeCards();
+      form.reset();
+      resetAddress();
+      document.querySelector('.map').classList.add('map--faded');
+      document.querySelector('.ad-form').classList.add('ad-form--disabled');
+      for (var x = 0; x < elements.length; x++) {
+        elements[x].setAttribute('disabled', '');
+      }
+      var errorReset = form.querySelector('.ad-form__reset');
+      errorReset.removeEventListener('click', window.form.deactivationPageHandler);
+      form.removeEventListener('submit', window.form.submitFormHandler);
+      document.removeEventListener('keydown', onSuccessMassegeEscPress);
+    },
+
+    submitFormHandler: function (evt) {
+      evt.preventDefault();
+      window.operateData('POST', 'https://javascript.pages.academy/keksobooking', errorHandler, function () {
+        window.form.deactivationPageHandler();
+        successHandler();
+        form.removeEventListener('submit', window.form.submitFormHandler);
+      }, new FormData(form));
     }
   };
 
@@ -56,15 +89,15 @@
     'palace': '10000'
   };
 
-  var typeRoom = form.querySelector('#type');
-  var price = form.querySelector('#price');
+  // var setPrice = function () {
+  //   var targetValue = MIN_PRICE[typeRoom.value];
+  //   // установи то значение атрибута, которое соответствует ключу объекта и = value выбранного элемента
+  //   price.setAttribute('min', targetValue);
+  //   price.setAttribute('placeholder', targetValue);
+  // };
 
-  typeRoom.addEventListener('change', function (evt) {
-    var targetValue = MIN_PRICE[evt.target.value];
-    // установи то значение атрибута, которое соответствует ключу объекта и = value выбранного элемента
-    price.setAttribute('min', targetValue);
-    price.setAttribute('placeholder', targetValue);
-  });
+  var typeRoom = form.querySelector('#type');
+  typeRoom.addEventListener('change', window.form.setPrice);
 
   // Валидация времени заезда и времени выезда - ТЗ 3.5.
   var TIME = {
@@ -94,26 +127,29 @@
   var formArray = Array.from(document.querySelector('.ad-form').querySelectorAll('fieldset'));
   var elements = mapArray.concat(formArray);
 
+  var messageError = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
+  var onErrorMassegeEscPress = function (evt) {
+    if (evt.key === 'Escape') {
+      messageError.remove();
+      document.removeEventListener('keydown', onErrorMassegeEscPress);
+    }
+  };
+
   var errorHandler = function () {
-    var messageError = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
     main.appendChild(messageError);
     var errorButton = messageError.querySelector('.error__button');
     errorButton.addEventListener('click', function () {
       messageError.remove();
     });
-    document.addEventListener('keydown', function (evt) {
-      if (evt.key === 'Escape') {
-        messageError.remove();
-      }
-    });
-    window.addEventListener('click', function (evt) {
+    document.addEventListener('keydown', onErrorMassegeEscPress);
+
+    messageError.addEventListener('click', function (evt) {
       if (!errorButton.contains(evt.target)) {
         messageError.remove();
       }
     });
   };
 
-  // почему обработчик не копится? он же нигде не удаляется
   var messageSuccess = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
   var onSuccessMassegeEscPress = function (evt) {
     if (evt.key === 'Escape') {
@@ -130,6 +166,7 @@
     });
   };
 
+  // Деактивация страницы
   var removePins = function () {
     var pins = document.querySelectorAll('.map__pin');
     for (var i = 0; i < pins.length; i++) {
@@ -146,7 +183,6 @@
     }
   };
 
-
   var resetAddress = function () {
     var pinMain = document.querySelector('.map__pin--main');
     pinMain.style.left = '570px';
@@ -154,34 +190,17 @@
     setAddress();
   };
 
-  var deactivationPage = function () {
-    removePins();
-    removeCards();
-    form.reset();
-    resetAddress();
-    document.querySelector('.map').classList.add('map--faded');
-    document.querySelector('.ad-form').classList.add('ad-form--disabled');
-    for (var x = 0; x < elements.length; x++) {
-      elements[x].setAttribute('disabled', '');
-    }
-  };
+  // var form = document.querySelector('.ad-form');
+  // var errorReset = form.querySelector('.ad-form__reset');
+  // errorReset.addEventListener('click', window.form.deactivationPageHandler);
+  // form.addEventListener('submit', window.form.submitFormHandler);
 
-  form.addEventListener('submit', function (evt) {
-    evt.preventDefault();
-
-    window.operateData('POST', 'https://javascript.pages.academy/keksobooking', errorHandler, function () {
-      deactivationPage();
-      successHandler();
-    }, new FormData(form));
-
-  });
-
-  var clickOnReset = function () {
-    var errorReset = form.querySelector('.ad-form__reset');
-    errorReset.addEventListener('click', function () {
-      deactivationPage();
-    });
-  };
-  clickOnReset();
+  // form.addEventListener('submit', function (evt) {
+  //   evt.preventDefault();
+  //   window.operateData('POST', 'https://javascript.pages.academy/keksobooking', errorHandler, function () {
+  //     deactivationPage();
+  //     successHandler();
+  //   }, new FormData(form));
+  // });
 
 })();

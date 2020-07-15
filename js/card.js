@@ -76,7 +76,7 @@
         m.src === card[i].querySelector('img').src
       ) {
         card[i].classList.remove('visually-hidden');
-        card[i].classList.add('.map__pin--active');
+        card[i].classList.add('map__pin--active');
 
       } else {
         card[i].classList.add('visually-hidden');
@@ -109,7 +109,7 @@
       var card = document.querySelectorAll('.map__card');
       for (var i = 0; i < card.length; i++) {
         card[i].classList.add('visually-hidden');
-        card[i].classList.remove('.map__pin--active');
+        card[i].classList.remove('map__pin--active');
       }
     },
 
@@ -125,6 +125,7 @@
       for (var i = 0; i < card.length; i++) {
         var buttonClose = card[i].querySelector('.popup__close');
         buttonClose.addEventListener('click', window.card.hiddenCard);
+        // document.removeEventListener('keydown', window.card.onCardEscPress);
       }
     }
   };

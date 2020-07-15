@@ -16,8 +16,8 @@
       pinElement.children[0].alt = parametrs.offer.title;
       // pinElement.classList.add('visually-hidden');
       pinElement.addEventListener('click', window.card.removeHiddenHandler);
-      document.addEventListener('click', window.card.closeCard);
-      document.addEventListener('keydown', window.card.onCardEscPress);
+      pinElement.addEventListener('click', window.card.closeCard);
+      pinElement.addEventListener('keydown', window.card.onCardEscPress);
 
       return pinElement;
     },
