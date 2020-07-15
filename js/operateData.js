@@ -1,12 +1,20 @@
 'use strict';
 (function () {
-  var URL = 'https://javascript.pages.academy/keksobooking/data';
+  // получение данных
+  // URL = 'https://javascript.pages.academy/keksobooking/data';
+  // METHOD = 'GET';
+
+  // отправка данных
+  // URL = 'https://javascript.pages.academy/keksobooking';
+  // METHOD = 'POST';
+
+
   var StatusCode = {
     OK: 200
   };
   var TIMEOUT_IN_MS = 10000;
 
-  window.load = function (onSuccess, onError) {
+  window.operateData = function (METHOD, URL, onError, onSuccess, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
@@ -17,16 +25,19 @@
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
+
     xhr.addEventListener('error', function () {
       onError('Произошла ошибка соединения');
     });
+
     xhr.addEventListener('timeout', function () {
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
     xhr.timeout = TIMEOUT_IN_MS;
 
-    xhr.open('GET', URL);
-    xhr.send();
+    xhr.open(METHOD, URL);
+    xhr.send(data);
   };
+
 })();
