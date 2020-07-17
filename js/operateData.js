@@ -8,13 +8,12 @@
   // URL = 'https://javascript.pages.academy/keksobooking';
   // METHOD = 'POST';
 
-
   var StatusCode = {
     OK: 200
   };
   var TIMEOUT_IN_MS = 10000;
 
-  window.operateData = function (METHOD, URL, onError, onSuccess, data) {
+  window.operateData = function (method, url, onError, onSuccess, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
@@ -36,7 +35,7 @@
 
     xhr.timeout = TIMEOUT_IN_MS;
 
-    xhr.open(METHOD, URL);
+    xhr.open(method, url);
     xhr.send(data);
   };
 

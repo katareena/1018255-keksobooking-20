@@ -69,20 +69,20 @@
 
 
   // Открыть объявление
-  var removeHidden = function (m) {
-    var card = document.querySelectorAll('.map__card');
-    for (var i = 0; i < card.length; i++) {
-      if (
-        m.src === card[i].querySelector('img').src
-      ) {
-        card[i].classList.remove('visually-hidden');
-        card[i].classList.add('map__pin--active');
+  // var removeHidden = function (m) {
+  //   var card = document.querySelectorAll('.map__card');
+  //   for (var i = 0; i < card.length; i++) {
+  //     if (
+  //       m.src === card[i].querySelector('img').src
+  //     ) {
+  //       card[i].classList.remove('visually-hidden');
+  //       m[i].classList.add('map__pin--active');
 
-      } else {
-        card[i].classList.add('visually-hidden');
-      }
-    }
-  };
+  //     } else {
+  //       card[i].classList.add('visually-hidden');
+  //     }
+  //   }
+  // };
 
   window.card = {
     createCard: function (parametrs) {
@@ -101,16 +101,42 @@
       return cardElement;
     },
 
+    renderCards: function (data) {
+      var fragmentCards = document.createDocumentFragment();
+      for (var i = 0; i < data.length; i++) {
+        fragmentCards.appendChild(window.card.createCard(data[i]));
+      }
+      var map = document.querySelector('.map');
+      var last = map.querySelector('.map__filters-container');
+      map.insertBefore(fragmentCards, last);
+    },
+
+    // removeHiddenHandler: function (evt) {
+    //   removeHidden(evt.target);
+    // },
+
     removeHiddenHandler: function (evt) {
-      removeHidden(evt.target);
+      var card = document.querySelectorAll('.map__card');
+      var activePin = document.querySelector('.map__pin--active');
+      if (activePin) {
+        activePin.classList.remove('map__pin--active');
+      }
+      for (var i = 0; i < card.length; i++) {
+        if (evt.target.src === card[i].querySelector('img').src) {
+          card[i].classList.remove('visually-hidden');
+          evt.target.parentElement.classList.add('map__pin--active');
+        } else {
+          card[i].classList.add('visually-hidden');
+        }
+      }
     },
 
     hiddenCard: function () {
       var card = document.querySelectorAll('.map__card');
       for (var i = 0; i < card.length; i++) {
         card[i].classList.add('visually-hidden');
-        card[i].classList.remove('map__pin--active');
       }
+      document.querySelector('.map__pin--active').classList.remove('map__pin--active');
     },
 
     onCardEscPress: function (evt) {
@@ -125,10 +151,15 @@
       for (var i = 0; i < card.length; i++) {
         var buttonClose = card[i].querySelector('.popup__close');
         buttonClose.addEventListener('click', window.card.hiddenCard);
-        // document.removeEventListener('keydown', window.card.onCardEscPress);
+      }
+    },
+
+    removeCards: function () {
+      var cards = document.querySelectorAll('.map__card');
+      for (var i = 0; i < cards.length; i++) {
+        cards[i].remove();
       }
     }
   };
-  window.card.hiddenCard();
 
 })();
