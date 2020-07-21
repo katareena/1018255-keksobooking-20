@@ -33,10 +33,12 @@
   };
 
   var successHandler = function (ads) {
-    window.dataFromServer.setData(ads);
-    var data = window.filterMap.createFilterTypeRoom('any');
-    window.pin.renderPins(data);
-    window.card.renderCards(data);
+    window.operateData.setData(ads);
+    // var data = window.filterMap.createFilterTypeRoom('any');
+    // var data = window.filterMap.eee();
+    // window.pin.renderPins(data);
+    // window.card.renderCards(data);
+    window.filterMap.setFilterAll();
 
     // var fragmentCards = document.createDocumentFragment();
     // for (var i = 0; i < ads.length; i++) {
@@ -62,10 +64,27 @@
     document.body.insertAdjacentElement('afterbegin', node);
   };
 
+  // настройки деактивации страницы
+  var deactivationPageHandler = function () {
+    window.pin.removePins();
+    window.card.removeCards();
+    form.reset();
+    window.form.resetAddress();
+    document.querySelector('.map').classList.add('map--faded');
+    document.querySelector('.ad-form').classList.add('ad-form--disabled');
+    for (var x = 0; x < elements.length; x++) {
+      elements[x].setAttribute('disabled', '');
+    }
+    var errorReset = form.querySelector('.ad-form__reset');
+    errorReset.removeEventListener('click', window.page.deactivationPageHandler);
+    form.removeEventListener('submit', window.form.submitFormHandler);
+    document.removeEventListener('keydown', window.form.onSuccessMassegeEscPress);
+  };
+
   var activationPage = function (evt) {
     if (evt.button === mainButton) {
       setActivationSetup();
-      window.operateData('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
+      window.operateData.operateData('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
       // var form = document.querySelector('.ad-form');
       var errorReset = form.querySelector('.ad-form__reset');
       errorReset.addEventListener('click', window.page.deactivationPageHandler);
@@ -76,7 +95,7 @@
   pinMain.addEventListener('keydown', function (evt) {
     if (evt.key === 'Enter') {
       setActivationSetup();
-      window.operateData('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
+      window.operateData.operateData('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
       // var form = document.querySelector('.ad-form');
       var errorReset = form.querySelector('.ad-form__reset');
       errorReset.addEventListener('click', window.page.deactivationPageHandler);
@@ -162,23 +181,8 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  // настройки деактивации страницы
   window.page = {
-    deactivationPageHandler: function () {
-      window.pin.removePins();
-      window.card.removeCards();
-      form.reset();
-      window.form.resetAddress();
-      document.querySelector('.map').classList.add('map--faded');
-      document.querySelector('.ad-form').classList.add('ad-form--disabled');
-      for (var x = 0; x < elements.length; x++) {
-        elements[x].setAttribute('disabled', '');
-      }
-      var errorReset = form.querySelector('.ad-form__reset');
-      errorReset.removeEventListener('click', window.page.deactivationPageHandler);
-      form.removeEventListener('submit', window.form.submitFormHandler);
-      document.removeEventListener('keydown', window.form.onSuccessMassegeEscPress);
-    },
+    deactivationPageHandler: deactivationPageHandler
   };
 
 })();
