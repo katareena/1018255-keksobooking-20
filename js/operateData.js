@@ -1,13 +1,5 @@
 'use strict';
 (function () {
-  // получение данных
-  // URL = 'https://javascript.pages.academy/keksobooking/data';
-  // METHOD = 'GET';
-
-  // отправка данных
-  // URL = 'https://javascript.pages.academy/keksobooking';
-  // METHOD = 'POST';
-
   var StatusCode = {
     OK: 200
   };

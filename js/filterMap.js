@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-
+  var DEBOUNCE_INTERVAL = 500;
   // ---------------- 1 вариант --------------------------------------------------------------
   // var createFilterTypeRoom = function (value) {
   //   var dataObject = window.operateData.getData();
@@ -40,7 +40,6 @@
   // filterTypeRoom.addEventListener('change', setFilterTypeRoom);
 
   // ---------------- 3 вариант --------------------------------------------------------------
-
   var mapFilter = document.querySelector('.map__filters');
   var filterType = mapFilter.querySelector('#housing-type');
   var filterPrice = mapFilter.querySelector('#housing-price');
@@ -68,72 +67,42 @@
 
   var setFilterType = function (evt) {
     valueType = evt.target.value;
-    window.setTimeout(function () {
-      setFilterAll();
-    }, 500);
   };
 
   var setFilterPrice = function (evt) {
     valuePrice = evt.target.value;
-    window.setTimeout(function () {
-      setFilterAll();
-    }, 500);
   };
 
   var setFilterRoom = function (evt) {
     valueRoom = evt.target.value;
-    window.setTimeout(function () {
-      setFilterAll();
-    }, 500);
   };
 
   var setFilterGuest = function (evt) {
     valueGuest = evt.target.value;
-    window.setTimeout(function () {
-      setFilterAll();
-    }, 500);
   };
 
   var setFilterWifi = function () {
     valueWifi = !valueWifi;
-    window.setTimeout(function () {
-      setFilterAll();
-    }, 500);
   };
 
   var setFilterDishwasher = function () {
     valueDishwasher = !valueDishwasher;
-    window.setTimeout(function () {
-      setFilterAll();
-    }, 500);
   };
 
   var setFilterParking = function () {
     valueParking = !valueParking;
-    window.setTimeout(function () {
-      setFilterAll();
-    }, 500);
   };
 
   var setFilterWasher = function () {
     valueWasher = !valueWasher;
-    window.setTimeout(function () {
-      setFilterAll();
-    }, 500);
   };
 
   var setFilterElevator = function () {
     valueElevator = !valueElevator;
-    window.setTimeout(function () {
-      setFilterAll();
-    }, 500);
   };
 
   var setFilterConditioner = function () {
     valueConditioner = !valueConditioner;
-    window.setTimeout(function () {
-      setFilterAll();
-    }, 500);
   };
 
   filterType.addEventListener('change', setFilterType);
@@ -147,27 +116,6 @@
   filterWasher.addEventListener('change', setFilterWasher);
   filterElevator.addEventListener('change', setFilterElevator);
   filterConditioner.addEventListener('change', setFilterConditioner);
-
-  var setFilterAll = function () {
-    window.pin.removePins();
-    window.card.removeCards();
-    // var dataObject = window.operateData.getData();
-    var arr = [];
-    // for (var i = 0; i < dataObject.length; i++) {
-    //   if (dataObject[i].offer.type === filterType || filterType === 'any') {
-    //     if (dataObject[i].offer.rooms === parseInt(filterRoom, 10) || filterRoom === 'any') {
-    //       arr.push(dataObject[i]);
-    //       if (arr.length > 4) {
-    //         break;
-    //       }
-    //     }
-    //   }
-    // }
-    arr = setF();
-    window.pin.renderPins(arr);
-    window.card.renderCards(arr);
-    return arr;
-  };
 
   var setF = function () {
     var data = window.operateData.getData();
@@ -190,8 +138,6 @@
     var r4 = r3.filter(function (value) {
       return value.offer.guests === parseInt(valueGuest, 10) || valueGuest === 'any';
     });
-
-
     var r5 = r4.filter(function (value) {
       if (valueWifi) {
         return value.offer.features.includes('wifi');
@@ -231,8 +177,40 @@
     return r10.slice(0, 5);
   };
 
+  var setFilterAll = function () {
+    window.pin.removePins();
+    window.card.removeCards();
+    var arr = setF();
+    window.pin.renderPins(arr);
+    window.card.renderCards(arr);
+  };
+
+  var lastTimeout;
+  var setDebounce = function () {
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
+    }
+    lastTimeout = window.setTimeout(setFilterAll, DEBOUNCE_INTERVAL);
+  };
+
+  mapFilter.addEventListener('change', setDebounce);
+
+  var removeFilterAll = function () {
+    valueType = 'any';
+    valuePrice = 'any';
+    valueRoom = 'any';
+    valueGuest = 'any';
+    valueWifi = false;
+    valueDishwasher = false;
+    valueParking = false;
+    valueWasher = false;
+    valueElevator = false;
+    valueConditioner = false;
+    mapFilter.reset();
+  };
 
   window.filterMap = {
-    setFilterAll: setFilterAll
+    setFilterAll: setFilterAll,
+    removeFilterAll: removeFilterAll
   };
 })();

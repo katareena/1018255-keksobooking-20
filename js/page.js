@@ -34,22 +34,10 @@
 
   var successHandler = function (ads) {
     window.operateData.setData(ads);
-    // var data = window.filterMap.createFilterTypeRoom('any');
-    // var data = window.filterMap.eee();
-    // window.pin.renderPins(data);
-    // window.card.renderCards(data);
     window.filterMap.setFilterAll();
-
-    // var fragmentCards = document.createDocumentFragment();
-    // for (var i = 0; i < ads.length; i++) {
-    //   fragmentCards.appendChild(window.card.createCard(ads[i]));
-    // }
     for (var x = 0; x < mapFilters.length; x++) {
       mapFilters[x].removeAttribute('disabled', '');
     }
-    // var map = document.querySelector('.map');
-    // var last = map.querySelector('.map__filters-container');
-    // map.insertBefore(fragmentCards, last);
   };
 
   var errorHandler = function (errorMessage) {
@@ -69,6 +57,7 @@
     window.pin.removePins();
     window.card.removeCards();
     form.reset();
+    window.filterMap.removeFilterAll();
     window.form.resetAddress();
     document.querySelector('.map').classList.add('map--faded');
     document.querySelector('.ad-form').classList.add('ad-form--disabled');
@@ -85,7 +74,6 @@
     if (evt.button === mainButton) {
       setActivationSetup();
       window.operateData.operateData('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
-      // var form = document.querySelector('.ad-form');
       var errorReset = form.querySelector('.ad-form__reset');
       errorReset.addEventListener('click', window.page.deactivationPageHandler);
       form.addEventListener('submit', window.form.submitFormHandler);
@@ -96,7 +84,6 @@
     if (evt.key === 'Enter') {
       setActivationSetup();
       window.operateData.operateData('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
-      // var form = document.querySelector('.ad-form');
       var errorReset = form.querySelector('.ad-form__reset');
       errorReset.addEventListener('click', window.page.deactivationPageHandler);
       form.addEventListener('submit', window.form.submitFormHandler);

@@ -134,7 +134,7 @@
 
   var submitFormHandler = function (evt) {
     evt.preventDefault();
-    window.operateData('POST', 'https://javascript.pages.academy/keksobooking', errorHandler, function () {
+    window.operateData.operateData('POST', 'https://javascript.pages.academy/keksobooking', errorHandler, function () {
       window.page.deactivationPageHandler();
       successHandler();
       form.removeEventListener('submit', window.form.submitFormHandler);
