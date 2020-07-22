@@ -45,7 +45,6 @@
 
   var typeRoom = form.querySelector('#type');
 
-
   // Валидация времени заезда и времени выезда - ТЗ 3.5.
   var TIME = {
     '12:00': '12:00',
@@ -68,57 +67,33 @@
     }
   });
 
-  // Экспорт
-  window.form = {
-    setAddressPin: function () {
-      var pinMainX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
-      var pinMainY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_HEIGHT;
-      address.value = pinMainX + ', ' + pinMainY;
-    },
+  var setAddressPin = function () {
+    var pinMainX = parseInt(document.querySelector('.map__pin--main').style.left, 10) + PIN_MAIN_HALF;
+    var pinMainY = parseInt(document.querySelector('.map__pin--main').style.top, 10) + PIN_MAIN_HEIGHT;
+    address.value = pinMainX + ', ' + pinMainY;
+  };
 
-    disabledCapacity: function () {
-      for (var j = 0; j < capacity.options.length; j++) {
-        capacity[j].disabled = !DISABLED_ROOMS[rooms.value].includes(capacity.options[j].value);
-        checkCapacity(capacity[j]);
-      }
-    },
-
-    setPrice: function () {
-      var price = form.querySelector('#price');
-      var targetValue = MIN_PRICE[typeRoom.value];
-      // установи то значение атрибута, которое соответствует ключу объекта и = value выбранного элемента
-      price.setAttribute('min', targetValue);
-      price.setAttribute('placeholder', targetValue);
-    },
-
-    resetAddress: function () {
-      var pinMain = document.querySelector('.map__pin--main');
-      pinMain.style.left = '570px';
-      pinMain.style.top = '375px';
-      setAddress();
-    },
-
-    submitFormHandler: function (evt) {
-      evt.preventDefault();
-      window.operateData('POST', 'https://javascript.pages.academy/keksobooking', errorHandler, function () {
-        window.page.deactivationPageHandler();
-        successHandler();
-        form.removeEventListener('submit', window.form.submitFormHandler);
-      }, new FormData(form));
-    },
-
-    onSuccessMassegeEscPress: function (evt) {
-      if (evt.key === 'Escape') {
-        messageSuccess.remove();
-      }
+  var disabledCapacity = function () {
+    for (var j = 0; j < capacity.options.length; j++) {
+      capacity[j].disabled = !DISABLED_ROOMS[rooms.value].includes(capacity.options[j].value);
+      checkCapacity(capacity[j]);
     }
   };
 
-  // почему обработчики не работают до экспорта???----------------------------------------------------------------------------------------------------------------------
-  rooms.addEventListener('change', window.form.disabledCapacity);
-  capacity.addEventListener('change', window.form.disabledCapacity);
-  typeRoom.addEventListener('change', window.form.setPrice);
+  var setPrice = function () {
+    var price = form.querySelector('#price');
+    var targetValue = MIN_PRICE[typeRoom.value];
+    // установи то значение атрибута, которое соответствует ключу объекта и = value выбранного элемента
+    price.setAttribute('min', targetValue);
+    price.setAttribute('placeholder', targetValue);
+  };
 
+  var resetAddress = function () {
+    var pinMain = document.querySelector('.map__pin--main');
+    pinMain.style.left = '570px';
+    pinMain.style.top = '375px';
+    setAddress();
+  };
 
   // Отправка данных формы на сервер
   var main = document.querySelector('main');
@@ -156,5 +131,34 @@
       messageSuccess.remove();
     });
   };
+
+  var submitFormHandler = function (evt) {
+    evt.preventDefault();
+    window.operateData.operateData('POST', 'https://javascript.pages.academy/keksobooking', errorHandler, function () {
+      window.page.deactivationPageHandler();
+      successHandler();
+      form.removeEventListener('submit', window.form.submitFormHandler);
+    }, new FormData(form));
+  };
+
+  var onSuccessMassegeEscPress = function (evt) {
+    if (evt.key === 'Escape') {
+      messageSuccess.remove();
+    }
+  };
+
+  // Экспорт
+  window.form = {
+    setAddressPin: setAddressPin,
+    disabledCapacity: disabledCapacity,
+    setPrice: setPrice,
+    resetAddress: resetAddress,
+    submitFormHandler: submitFormHandler,
+    onSuccessMassegeEscPress: onSuccessMassegeEscPress,
+  };
+
+  rooms.addEventListener('change', window.form.disabledCapacity);
+  capacity.addEventListener('change', window.form.disabledCapacity);
+  typeRoom.addEventListener('change', window.form.setPrice);
 
 })();
