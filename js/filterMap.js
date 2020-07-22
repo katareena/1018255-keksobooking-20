@@ -1,45 +1,9 @@
 'use strict';
 (function () {
   var DEBOUNCE_INTERVAL = 500;
-  // ---------------- 1 вариант --------------------------------------------------------------
-  // var createFilterTypeRoom = function (value) {
-  //   var dataObject = window.operateData.getData();
-  //   if (value === 'any') {
-  //     return dataObject;
-  //   }
-  //   var dataObjectType = dataObject.filter(function (el) {
-  //     return el.offer.type === value;
-  //   });
-  //   // console.log(dataObjectType);
-  //   return dataObjectType;
-  // };
+  var FIRST_BREAK_PRICE = 10000;
+  var SECOND_BREAK_PRICE = 50000;
 
-  // ---------------- 2 вариант --------------------------------------------------------------
-  // var createFilterTypeRoom = function (value) {
-  //   var dataObject = window.operateData.getData();
-  //   var arr = [];
-  //   for (var i = 0; i < dataObject.length; i++) {
-  //     if (dataObject[i].offer.type === value || value === 'any') {
-  //       arr.push(dataObject[i]);
-  //       if (arr.length > 4) {
-  //         return arr;
-  //       }
-  //     }
-  //   }
-  //   return arr;
-  // };
-
-  //   var setFilterTypeRoom = function (evt) {
-  //   window.pin.removePins();
-  //   window.card.removeCards();
-  //   var data = createFilterTypeRoom(evt.target.value);
-  //   window.pin.renderPins(data);
-  //   window.card.renderCards(data);
-  // };
-
-  // filterTypeRoom.addEventListener('change', setFilterTypeRoom);
-
-  // ---------------- 3 вариант --------------------------------------------------------------
   var mapFilter = document.querySelector('.map__filters');
   var filterType = mapFilter.querySelector('#housing-type');
   var filterPrice = mapFilter.querySelector('#housing-price');
@@ -119,62 +83,62 @@
 
   var setF = function () {
     var data = window.operateData.getData();
-    var r1 = data.filter(function (value) {
+    var resultType = data.filter(function (value) {
       return value.offer.type === valueType || valueType === 'any';
     });
-    var r2 = r1.filter(function (value) {
+    var resultPrice = resultType.filter(function (value) {
       if (valuePrice === 'middle') {
-        return value.offer.price >= 10000 && value.offer.price <= 50000;
+        return value.offer.price >= FIRST_BREAK_PRICE && value.offer.price <= SECOND_BREAK_PRICE;
       } else if (valuePrice === 'low') {
-        return value.offer.price < 10000;
+        return value.offer.price < FIRST_BREAK_PRICE;
       } else if (valuePrice === 'high') {
-        return value.offer.price > 50000;
+        return value.offer.price > SECOND_BREAK_PRICE;
       }
       return true;
     });
-    var r3 = r2.filter(function (value) {
+    var resultRooms = resultPrice.filter(function (value) {
       return value.offer.rooms === parseInt(valueRoom, 10) || valueRoom === 'any';
     });
-    var r4 = r3.filter(function (value) {
+    var resultGuests = resultRooms.filter(function (value) {
       return value.offer.guests === parseInt(valueGuest, 10) || valueGuest === 'any';
     });
-    var r5 = r4.filter(function (value) {
+    var resultWifi = resultGuests.filter(function (value) {
       if (valueWifi) {
         return value.offer.features.includes('wifi');
       }
       return true;
     });
-    var r6 = r5.filter(function (value) {
+    var resultDishwasher = resultWifi.filter(function (value) {
       if (valueDishwasher) {
         return value.offer.features.includes('dishwasher');
       }
       return true;
     });
-    var r7 = r6.filter(function (value) {
+    var resultParking = resultDishwasher.filter(function (value) {
       if (valueParking) {
         return value.offer.features.includes('parking');
       }
       return true;
     });
-    var r8 = r7.filter(function (value) {
+    var resultWasher = resultParking.filter(function (value) {
       if (valueWasher) {
         return value.offer.features.includes('washer');
       }
       return true;
     });
-    var r9 = r8.filter(function (value) {
+    var resultElevator = resultWasher.filter(function (value) {
       if (valueElevator) {
         return value.offer.features.includes('elevator');
       }
       return true;
     });
-    var r10 = r9.filter(function (value) {
+    var resultConditioner = resultElevator.filter(function (value) {
       if (valueConditioner) {
         return value.offer.features.includes('conditioner');
       }
       return true;
     });
-    return r10.slice(0, 5);
+    return resultConditioner.slice(0, 5);
   };
 
   var setFilterAll = function () {
