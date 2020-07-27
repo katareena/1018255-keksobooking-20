@@ -1,7 +1,30 @@
 'use strict';
 (function () {
+  var POST_ADRESS = 'https://javascript.pages.academy/keksobooking';
   var PIN_MAIN_HALF = 31;
-  var PIN_MAIN_HEIGHT = 62 + 22;
+  var PIN_MAIN_HEIGHT = 84;
+  var ESCAPE = 'Escape';
+
+  var DISABLED_ROOMS = {
+    '1': ['1'],
+    '2': ['1', '2'],
+    '3': ['1', '2', '3'],
+    '100': ['0']
+  };
+
+  var MIN_PRICE = {
+    'bungalo': '0',
+    'flat': '1000',
+    'house': '5000',
+    'palace': '10000'
+  };
+
+  var TIME = {
+    '12:00': '12:00',
+    '13:00': '13:00',
+    '14:00': '14:00'
+  };
+
   var address = document.querySelector('#address');
 
   // Заполнение поля адреса
@@ -14,13 +37,6 @@
   setAddress();
 
   // Валидация: зависимость кол-ва гостей от кол-ва комнат
-  var DISABLED_ROOMS = {
-    '1': ['1'],
-    '2': ['1', '2'],
-    '3': ['1', '2', '3'],
-    '100': ['0']
-  };
-
   var form = document.querySelector('.ad-form');
   var rooms = form.querySelector('#room_number');
   var capacity = form.querySelector('#capacity');
@@ -36,22 +52,9 @@
   };
 
   // Валидация цены от типа комнаты - ТЗ 3.3.
-  var MIN_PRICE = {
-    'bungalo': '0',
-    'flat': '1000',
-    'house': '5000',
-    'palace': '10000'
-  };
-
   var typeRoom = form.querySelector('#type');
 
   // Валидация времени заезда и времени выезда - ТЗ 3.5.
-  var TIME = {
-    '12:00': '12:00',
-    '13:00': '13:00',
-    '14:00': '14:00'
-  };
-
   var timein = form.querySelector('#timein');
   var timeout = form.querySelector('#timeout');
 
@@ -99,10 +102,10 @@
   var main = document.querySelector('main');
 
   var messageError = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
-  var onErrorMassegeEscPress = function (evt) {
-    if (evt.key === 'Escape') {
+  var errorMassegeEscPressHandler = function (evt) {
+    if (evt.key === ESCAPE) {
       messageError.remove();
-      document.removeEventListener('keydown', onErrorMassegeEscPress);
+      document.removeEventListener('keydown', errorMassegeEscPressHandler);
     }
   };
 
@@ -112,7 +115,7 @@
     errorButton.addEventListener('click', function () {
       messageError.remove();
     });
-    document.addEventListener('keydown', onErrorMassegeEscPress);
+    document.addEventListener('keydown', errorMassegeEscPressHandler);
 
     messageError.addEventListener('click', function (evt) {
       if (!errorButton.contains(evt.target)) {
@@ -123,29 +126,34 @@
 
   var messageSuccess = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
 
+  var successMassegeEscPressHandler = function (evt) {
+    if (evt.key === 'Escape') {
+      messageSuccess.remove();
+      document.removeEventListener('keydown', window.form.successMassegeEscPressHandler);
+    }
+  };
+
+  var successMassegeClickHandler = function () {
+    messageSuccess.remove();
+    document.removeEventListener('keydown', window.form.successMassegeEscPressHandler);
+  };
+
   var successHandler = function () {
     main.appendChild(messageSuccess);
     setAddress();
-    document.addEventListener('keydown', window.form.onSuccessMassegeEscPress);
-    messageSuccess.addEventListener('click', function () {
-      messageSuccess.remove();
-    });
+    document.addEventListener('keydown', window.form.successMassegeEscPressHandler);
+    messageSuccess.addEventListener('click', successMassegeClickHandler);
   };
 
   var submitFormHandler = function (evt) {
     evt.preventDefault();
-    window.operateData.operateData('POST', 'https://javascript.pages.academy/keksobooking', errorHandler, function () {
+    window.operateData.operateData('POST', POST_ADRESS, errorHandler, function () {
       window.page.deactivationPageHandler();
       successHandler();
       form.removeEventListener('submit', window.form.submitFormHandler);
     }, new FormData(form));
   };
 
-  var onSuccessMassegeEscPress = function (evt) {
-    if (evt.key === 'Escape') {
-      messageSuccess.remove();
-    }
-  };
 
   // Экспорт
   window.form = {
@@ -154,7 +162,7 @@
     setPrice: setPrice,
     resetAddress: resetAddress,
     submitFormHandler: submitFormHandler,
-    onSuccessMassegeEscPress: onSuccessMassegeEscPress,
+    successMassegeEscPressHandler: successMassegeEscPressHandler
   };
 
   rooms.addEventListener('change', window.form.disabledCapacity);

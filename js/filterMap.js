@@ -1,6 +1,5 @@
 'use strict';
 (function () {
-  var DEBOUNCE_INTERVAL = 500;
   var FIRST_BREAK_PRICE = 10000;
   var SECOND_BREAK_PRICE = 50000;
 
@@ -81,7 +80,7 @@
   filterElevator.addEventListener('change', setFilterElevator);
   filterConditioner.addEventListener('change', setFilterConditioner);
 
-  var setF = function () {
+  var createFilter = function () {
     var data = window.operateData.getData();
     var resultType = data.filter(function (value) {
       return value.offer.type === valueType || valueType === 'any';
@@ -144,20 +143,10 @@
   var setFilterAll = function () {
     window.pin.removePins();
     window.card.removeCards();
-    var arr = setF();
+    var arr = createFilter();
     window.pin.renderPins(arr);
     window.card.renderCards(arr);
   };
-
-  var lastTimeout;
-  var setDebounce = function () {
-    if (lastTimeout) {
-      window.clearTimeout(lastTimeout);
-    }
-    lastTimeout = window.setTimeout(setFilterAll, DEBOUNCE_INTERVAL);
-  };
-
-  mapFilter.addEventListener('change', setDebounce);
 
   var removeFilterAll = function () {
     valueType = 'any';

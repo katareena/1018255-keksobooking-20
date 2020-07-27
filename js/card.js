@@ -1,14 +1,14 @@
 'use strict';
 (function () {
   // Создание и отрисовка обьявления
-  var similarCardTemplate = document.querySelector('#card').content.querySelector('.map__card');
-
   var TYPES = {
     'flat': 'Квартира',
     'bungalo': 'Бунгало',
     'house': 'Дом',
     'palace': 'Дворец'
   };
+
+  var similarCardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 
   var addValue = function (elem, value) {
     elem.textContent = value;
@@ -36,7 +36,7 @@
     for (var i = 0; i < parametrs.offer.features.length; i++) {
       var li = document.createElement('li');
       li.setAttribute('class', 'popup__feature popup__feature--' + parametrs.offer.features[i]);
-      elem.querySelector('.popup__features').appendChild(li);
+      parent.appendChild(li);
     }
   };
 
@@ -81,42 +81,61 @@
     map.insertBefore(fragmentCards, last);
   };
 
-  var removeHiddenHandler = function (evt) {
-    var card = document.querySelectorAll('.map__card');
+  var openCardHandler = function (evt) {
+    var cards = document.querySelectorAll('.map__card');
     var activePin = document.querySelector('.map__pin--active');
     if (activePin) {
       activePin.classList.remove('map__pin--active');
     }
-    for (var i = 0; i < card.length; i++) {
-      if (evt.target.src === card[i].querySelector('img').src) {
-        card[i].classList.remove('visually-hidden');
+    for (var i = 0; i < cards.length; i++) {
+      if (evt.target.src === cards[i].querySelector('img').src) {
+        cards[i].classList.remove('visually-hidden');
         evt.target.parentElement.classList.add('map__pin--active');
       } else {
-        card[i].classList.add('visually-hidden');
+        cards[i].classList.add('visually-hidden');
       }
     }
   };
 
-  var hiddenCard = function () {
-    var card = document.querySelectorAll('.map__card');
-    for (var i = 0; i < card.length; i++) {
-      card[i].classList.add('visually-hidden');
+  var cardEnterPressHandler = function (evt) {
+    if (evt.key === 'Enter') {
+      evt.preventDefault();
+      var cards = document.querySelectorAll('.map__card');
+      var activePin = document.querySelector('.map__pin--active');
+      if (activePin) {
+        activePin.classList.remove('map__pin--active');
+      }
+      for (var i = 0; i < cards.length; i++) {
+        if (evt.target.lastChild.src === cards[i].querySelector('img').src) {
+          cards[i].classList.remove('visually-hidden');
+          evt.target.classList.add('map__pin--active');
+        } else {
+          cards[i].classList.add('visually-hidden');
+        }
+      }
+    }
+  };
+
+  var hideCardHandler = function () {
+    var cards = document.querySelectorAll('.map__card');
+    for (var i = 0; i < cards.length; i++) {
+      cards[i].classList.add('visually-hidden');
     }
     document.querySelector('.map__pin--active').classList.remove('map__pin--active');
   };
 
-  var onCardEscPress = function (evt) {
+  var cardEscPressHandler = function (evt) {
     if (evt.key === 'Escape') {
       evt.preventDefault();
-      window.card.hiddenCard();
+      window.card.hideCardHandler();
     }
   };
 
-  var closeCard = function () {
-    var card = document.querySelectorAll('.map__card');
-    for (var i = 0; i < card.length; i++) {
-      var buttonClose = card[i].querySelector('.popup__close');
-      buttonClose.addEventListener('click', window.card.hiddenCard);
+  var closeCardHandler = function () {
+    var cards = document.querySelectorAll('.map__card');
+    for (var i = 0; i < cards.length; i++) {
+      var buttonClose = cards[i].querySelector('.popup__close');
+      buttonClose.addEventListener('click', window.card.hideCardHandler);
     }
   };
 
@@ -127,14 +146,17 @@
     }
   };
 
+  document.addEventListener('keydown', window.card.cardEscPressHandler);
+
   window.card = {
     createCard: createCard,
     renderCards: renderCards,
-    removeHiddenHandler: removeHiddenHandler,
-    hiddenCard: hiddenCard,
-    onCardEscPress: onCardEscPress,
-    closeCard: closeCard,
-    removeCards: removeCards
+    openCardHandler: openCardHandler,
+    hideCardHandler: hideCardHandler,
+    cardEscPressHandler: cardEscPressHandler,
+    closeCardHandler: closeCardHandler,
+    removeCards: removeCards,
+    cardEnterPressHandler: cardEnterPressHandler
   };
 
 })();

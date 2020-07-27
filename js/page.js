@@ -1,6 +1,7 @@
 'use strict';
 (function () {
-  var mainButton = 0;
+  var MAIN_BUTTON = 0;
+  var GET_ADRESS = 'https://javascript.pages.academy/keksobooking/data';
 
   var mapFilters = Array.from(document.querySelector('.map__filters'));
   var formFieldset = Array.from(document.querySelector('.ad-form').querySelectorAll('fieldset'));
@@ -67,13 +68,14 @@
     var errorReset = form.querySelector('.ad-form__reset');
     errorReset.removeEventListener('click', window.page.deactivationPageHandler);
     form.removeEventListener('submit', window.form.submitFormHandler);
-    document.removeEventListener('keydown', window.form.onSuccessMassegeEscPress);
+    document.removeEventListener('keydown', window.form.successMassegeEscPressHandler);
+    document.removeEventListener('keydown', window.card.cardEscPressHandler);
   };
 
   var activationPage = function (evt) {
-    if (evt.button === mainButton) {
+    if (evt.button === MAIN_BUTTON) {
       setActivationSetup();
-      window.operateData.operateData('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
+      window.operateData.operateData('GET', GET_ADRESS, errorHandler, successHandler);
       var errorReset = form.querySelector('.ad-form__reset');
       errorReset.addEventListener('click', window.page.deactivationPageHandler);
       form.addEventListener('submit', window.form.submitFormHandler);
@@ -83,7 +85,7 @@
   pinMain.addEventListener('keydown', function (evt) {
     if (evt.key === 'Enter') {
       setActivationSetup();
-      window.operateData.operateData('GET', 'https://javascript.pages.academy/keksobooking/data', errorHandler, successHandler);
+      window.operateData.operateData('GET', GET_ADRESS, errorHandler, successHandler);
       var errorReset = form.querySelector('.ad-form__reset');
       errorReset.addEventListener('click', window.page.deactivationPageHandler);
       form.addEventListener('submit', window.form.submitFormHandler);
@@ -119,7 +121,7 @@
         y: evt.clientY
       };
 
-      var onMouseMove = function (moveEvt) {
+      var mouseMoveHandler = function (moveEvt) {
         moveEvt.preventDefault();
 
         var shift = {
@@ -156,16 +158,16 @@
         window.form.setAddressPin();
       };
 
-      var onMouseUp = function (upEvt) {
+      var mouseUpHandler = function (upEvt) {
         upEvt.preventDefault();
         pinMain.removeEventListener('mousedown', activationPage);
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
       };
     }
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
   });
 
   window.page = {

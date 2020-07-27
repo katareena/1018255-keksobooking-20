@@ -11,9 +11,10 @@
     pinElement.style.top = parametrs.location.y - PIN_HEIGHT + 'px';
     pinElement.children[0].src = parametrs.author.avatar;
     pinElement.children[0].alt = parametrs.offer.title;
-    pinElement.addEventListener('click', window.card.removeHiddenHandler);
-    pinElement.addEventListener('click', window.card.closeCard);
-    pinElement.addEventListener('keydown', window.card.onCardEscPress);
+    pinElement.addEventListener('click', window.card.openCardHandler);
+    pinElement.addEventListener('click', window.card.closeCardHandler);
+    document.addEventListener('keydown', window.card.cardEscPressHandler);
+    pinElement.addEventListener('keydown', window.card.cardEnterPressHandler);
     return pinElement;
   };
 
