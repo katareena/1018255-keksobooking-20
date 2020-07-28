@@ -163,7 +163,8 @@
   };
 
   window.filterMap = {
-    setFilterAll: setFilterAll,
-    removeFilterAll: removeFilterAll
+    removeFilterAll: removeFilterAll,
+    setFilterAll: setFilterAll
   };
+
 })();

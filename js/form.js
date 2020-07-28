@@ -157,10 +157,10 @@
 
   // Экспорт
   window.form = {
-    setAddressPin: setAddressPin,
     disabledCapacity: disabledCapacity,
-    setPrice: setPrice,
     resetAddress: resetAddress,
+    setAddressPin: setAddressPin,
+    setPrice: setPrice,
     submitFormHandler: submitFormHandler,
     successMassegeEscPressHandler: successMassegeEscPressHandler
   };

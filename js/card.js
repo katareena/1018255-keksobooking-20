@@ -121,7 +121,10 @@
     for (var i = 0; i < cards.length; i++) {
       cards[i].classList.add('visually-hidden');
     }
-    document.querySelector('.map__pin--active').classList.remove('map__pin--active');
+    var activePin = document.querySelector('.map__pin--active');
+    if (activePin) {
+      activePin.classList.remove('map__pin--active');
+    }
   };
 
   var cardEscPressHandler = function (evt) {
@@ -149,14 +152,14 @@
   document.addEventListener('keydown', window.card.cardEscPressHandler);
 
   window.card = {
-    createCard: createCard,
-    renderCards: renderCards,
-    openCardHandler: openCardHandler,
-    hideCardHandler: hideCardHandler,
     cardEscPressHandler: cardEscPressHandler,
+    cardEnterPressHandler: cardEnterPressHandler,
     closeCardHandler: closeCardHandler,
+    createCard: createCard,
+    hideCardHandler: hideCardHandler,
+    openCardHandler: openCardHandler,
     removeCards: removeCards,
-    cardEnterPressHandler: cardEnterPressHandler
+    renderCards: renderCards
   };
 
 })();
